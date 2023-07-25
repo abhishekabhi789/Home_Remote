@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Home Remote</title>
+	<link rel="icon" type="image/x-icon" href="favicon.ico">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0 user-scalable=no">
+	<meta name="color-scheme" content="dark light">
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+	<div class="controls">
+		<div id="uptime" class="uptime"><i class="fa fa-clock-o" id="uptime_string"></i></div>
+		<button class="night-mode-button" onclick="toggleNightMode();"><i class="fa fa-moon-o"></i></button>
+		<div class="tv-control">
+			<h2><i class="fa fa-tv"></i>TV Control</h2>
+			<button class="tv-button" onclick="sendTVCode('power')" style="background-color: red;margin-right: 5px;"><i
+					class="fa fa-power-off"></i>TV
+				Power</button>
+			<br>
+			<button class="tv-button" onclick="sendTVCode('vol_down');"><i class="fa fa-volume-down"></i>Volume
+				-</button>
+			<button class="tv-button" onclick="sendTVCode('vol_up');"><i class="fa fa-volume-up"></i>Volume
+				+</button>
+		</div>
+		<div class="dth-control">
+			<h2><img src="https://www.sundirect.in/Content/Admin/images/favicon.ico"
+					style="height:0.7em; margin-right: 4px; filter: grayscale(100%);">DTH Control
+			</h2>
+			<div class="button-group"> <button class="dth-button" onclick="sendDthCode('mute');"><i
+						class="fa fa-volume-off"></i>Mute</button>
+				<div class="scan-button">
+					<input type="checkbox" id="scan-btn" style="display: none;" onchange="scanChannels(this);">
+					<label for="scan-btn"><i class="fa fa-search"></i>Scan</label>
+				</div>
+				<button class="dth-button" onclick="sendDthCode('last_ch');"><i
+						class=" fa fa-step-backward"></i>Previous</button>
+			</div>
+			<div class="navigation-buttons">
+				<div class="nav-inline"><input type="radio" name="navigation" id="nav_tv" class="nav-selector"
+						value="tv" onclick="changeNav(this)">
+					<label for="nav_tv"><i class="fa fa-tv" style="margin-right: 50%;"></i></label>
+					<input type="radio" name="navigation" id="nav_dth" class="nav-selector" value="dth"
+						onclick="changeNav(this)" checked><label for="nav_dth"><img
+							src="https://www.sundirect.in/Content/Admin/images/favicon.ico"
+							style="height:0.7em; margin-right: 4px; filter: grayscale(100%);"></label><br>
+				</div>
+				<button class="navigation-button" onclick="sendNavigation('nav_up');"><i
+						class="fa fa-chevron-up"></i></button><br>
+				<button class="navigation-button" onclick="sendNavigation('nav_left');"><i
+						class="fa fa-chevron-left"></i></button>
+				<button class="navigation-button" onclick="sendNavigation('ok');"
+					style="background-color: orangered;"><i class="fa fa-circle"></i></button>
+				<button class="navigation-button" onclick="sendNavigation('nav_right');"><i
+						class="fa fa-chevron-right"></i></button><br>
+				<button class="navigation-button" onclick="sendNavigation('nav_down');"><i
+						class="fa fa-chevron-down"></i></button>
+			</div>
+			<button class="dth-button" onclick="sendNavigation('menu');"><i class="fa fa-bars"></i>Menu</button>
+			<button class="dth-button" onclick="sendNavigation('back');"><i class="fa fa-arrow-right"></i>Back</button>
+		</div>
+	</div>
+	<div class="channel-grid">
+		<div class="channel-card" onclick="switchchannel(207);"> <img class="channel-image"
+				src="https://upload.wikimedia.org/wikipedia/en/1/1c/Flowers-Onam.png" alt="Flowers">
+		</div>
+		<div class="channel-card" onclick="switchchannel(233);"> <img class="channel-image"
+				src="https://upload.wikimedia.org/wikipedia/commons/5/56/Asianet_News_New_logo.jpg" alt="Asianet News">
+		</div>
+		<div class="channel-card" onclick="switchchannel(856);"> <img class="channel-image"
+				src="https://upload.wikimedia.org/wikipedia/commons/2/26/Mazhavil_Manorama_TV_Logo.jpg"
+				alt="Mazhavil Manorama">
+		</div>
+		<div class="channel-card" onclick="switchchannel(214);"> <img class="channel-image"
+				src="https://upload.wikimedia.org/wikipedia/en/6/6e/Kairali_TV.svg" alt="Kairali">
+		</div>
+		<div class="channel-card" onclick="switchchannel(215);"> <img class="channel-image"
+				src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Kairali_WE_TV_Logo.png/213px-Kairali_WE_TV_Logo.png"
+				alt="Kairali WE">
+		</div>
+		<div class="channel-card" onclick="switchchannel(247);"> <img class="channel-image"
+				src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Safari_logo_new_25-07-2015.png/320px-Safari_logo_new_25-07-2015.png"
+				alt="Safari">
+		</div>
+		<div class="channel-card" onclick="switchchannel(217);"> <img class="channel-image"
+				src="https://upload.wikimedia.org/wikipedia/en/4/48/Amrita_TV.svg" alt="Amrita TV">
+		</div>
+		<div class="channel-card" onclick="switchchannel(220);"> <img class="channel-image"
+				src="https://upload.wikimedia.org/wikipedia/commons/b/b3/Jaihind_TV_Logo.jpg" alt="Jai Hind">
+		</div>
+		<div class="channel-card" onclick="switchchannel(218);"> <img class="channel-image"
+				src="https://upload.wikimedia.org/wikipedia/en/f/fa/DDMalayalam.png" alt="DD Malayalam">
+		</div>
+		<div class="channel-card" onclick="switchchannel(239);"> <img class="channel-image"
+				src="https://www.twentyfournews.com/wp-content/themes/24News_v5/images/logo-new.png" alt="Twenty Four">
+		</div>
+		<div class="channel-card" onclick="switchchannel(236);"> <img class="channel-image"
+				src="https://www.kairalinewsonline.com/wp-content/themes/Nextline_V5/images/kairali-logo.svg"
+				alt="Kairali News">
+		</div>
+		<div class="channel-card" onclick="switchchannel(235);"> <img class="channel-image"
+				src="https://upload.wikimedia.org/wikipedia/en/thumb/7/74/Manorama_News.svg/225px-Manorama_News.svg.png"
+				alt="Manorama News">
+		</div>
+		<div class="channel-card" onclick="switchchannel(234);"> <img class="channel-image"
+				src="https://upload.wikimedia.org/wikipedia/commons/7/70/Mathrubhumi_news.svg" alt="Mathrubhumi News">
+		</div>
+		<div class="channel-card" onclick="switchchannel(240);"> <img class="channel-image"
+				src="https://upload.wikimedia.org/wikipedia/commons/6/60/Reporter_TV_2023.jpg" alt="Reporter">
+		</div>
+	</div>
+	<div id="epg" class="epg"></div>
+	<script src="script.js"></script>
+</body>
+
+</html>

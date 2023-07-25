@@ -1,0 +1,8 @@
+.pio/
+.vscode/
+src/config.h
+src/build/
+test/
+lib/
+include/
+AndroidApp/.idea/deploymentTargetDropDown.xml
