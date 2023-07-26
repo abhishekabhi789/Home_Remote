@@ -71,7 +71,7 @@ function getMinutesFromNow(timeString) {
     const [time, ampm] = timeString.split(" ");
     const [hour, minute] = time.split(/[:.]+/).map(Number);
     let hours = hour % 12;
-    hours = (ampm == "PM") ? 12 + hour : hour;
+    hours = (ampm == "PM") ? 12 + hours : hours;
     let totalMinutes = hours * 60;
     totalMinutes += minute - (now.getHours() * 60 + now.getMinutes());
     return totalMinutes;
@@ -99,48 +99,42 @@ function sortTable() {
     }
 }
 function removeOldItems() {
-    var rows, switching, i, x, y, shouldRemove;
-    switching = true;
-    while (switching) {
-        switching = false;
-        rows = document.querySelectorAll(".table-price tr");
-        for (i = 2; i < (rows.length - 2); i++) {
-            shouldRemove = false;
-            x = rows[i].getElementsByTagName("td")[0];
-            if ((getMinutesFromNow(x.innerHTML) < - (2 * 60)) ? true : false) {
-                shouldRemove = true;
-                break;
-            }
-        }
-        if (shouldRemove) {
+    var rows = document.querySelectorAll(".table-price tr");
+    for (i = 2; i < (rows.length - 2); i++) {
+        let time = rows[i].getElementsByTagName("td")[0];
+        if ((getMinutesFromNow(time.innerHTML) < - (2 * 60)) ? true : false) {
             rows[i].parentNode.removeChild(rows[i]);
-            switching = true;
         }
     }
 }
 function removeUnwantedChannels() {
-    var rows, switching, i, x, y, shouldRemove;
-    const myChannels = ["Mazhavil Manorama", "Kairali TV", "Kairali We TV", "Amrita TV", "DD Malayalam"];
-    switching = true;
-    while (switching) {
-        switching = false;
-        rows = document.querySelectorAll(".table-price tr");
-        for (i = 2; i < (rows.length - 2); i++) {
-            shouldRemove = false;
-            x = rows[i].getElementsByTagName("td")[1];
-            let channel = x.innerHTML.toUpperCase();
-            let removIt = myChannels.find(name => name.toUpperCase() === channel);
-            if (!removIt) {
-                shouldRemove = true;
-                break;
-            }
-        }
-        if (shouldRemove) {
+    const myChannels = ["MAZHAVIL MANORAMA", "KAIRALI TV", "KAIRALI WE TV", "AMRITA TV", "DD MALAYALAM"];
+    const channelCodes = { "MAZHAVIL MANORAMA": 856, "KAIRALI TV": 214, "KAIRALI WE TV": 215, "AMRITA TV": 217, "DD MALAYALAM": 218 };
+    var rows = document.querySelectorAll(".table-price tr");
+    for (i = 2; i < (rows.length - 1); i++) {
+        let channel = rows[i].getElementsByTagName("td")[1];
+        let name = channel.innerHTML.toUpperCase();
+        let removIt = myChannels.find(item => item === name);
+        if (!removIt) {
             rows[i].parentNode.removeChild(rows[i]);
-            switching = true;
+        } else {
+            let showtime = rows[i].getElementsByTagName("td")[0];
+            let timetoshow = getMinutesFromNow(showtime.innerHTML);
+            let margin = 15; //minutes
+            if (timetoshow < margin) {
+                let code = channelCodes[name];
+                channel.parentNode.addEventListener("click", function () {
+                    event.preventDefault();
+                    switchchannel(code);
+                });
+                channel.parentElement.setAttribute("style", "background-color: lightgreen;")
+                channel.parentElement.className = "active-show";
+
+            }
         }
     }
 }
+
 function getEpg() {
     let epg = document.getElementById("epg");
     let xhr = new XMLHttpRequest();

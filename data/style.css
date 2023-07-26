@@ -91,7 +91,8 @@ button {
 .channel-card,
 .navigation-button,
 .night-mode-button,
-.scan-button label {
+.scan-button label,
+.active-show {
     align-items: center;
     transition: transform 0.2s ease;
     transform: scale(1.0);
@@ -102,7 +103,8 @@ button {
 .channel-card:hover,
 .navigation-button:hover,
 .night-mode-button:hover,
-.scan-button label:hover {
+.scan-button label:hover,
+.active-show:hover {
     transform: scale(1.1);
 }
 
@@ -111,7 +113,8 @@ button {
 .channel-card:active,
 .navigation-button:active,
 .navigation-button:active,
-.scan-button label:active {
+.scan-button label:active,
+.active-show:active {
     transform: scale(0.9);
 }
 
@@ -219,10 +222,6 @@ i {
     padding: 5px
 }
 
-.epg tr:nth-child(even) {
-    background: #999;
-}
-
 .nav-selector {
     display: none;
 }
@@ -231,4 +230,8 @@ i {
     visibility: hidden;
     margin: 10px;
     font-size: 20px;
+}
+.active-show{
+    transition: transform 0.2s ease;
+    transform: scale(1.0);
 }
