@@ -1,5 +1,5 @@
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f5f5f5;
     margin: auto;
     padding: 10px;
@@ -10,6 +10,11 @@ body {
     -o-user-select: none;
     user-select: none;
     color: black;
+}
+
+body::-webkit-scrollbar,
+.epg::-webkit-scrollbar {
+    width: 0;
 }
 
 .night-mode-button {
@@ -31,7 +36,7 @@ body {
 }
 
 .night-mode .controls,
-.night-mode #epg {
+.night-mode .epg {
     color: #f5f5f5;
     background-color: #333;
 }
@@ -54,7 +59,7 @@ button {
     border-radius: 4px;
     cursor: pointer;
     border-radius: 50px;
-    box-shadow: 2px 3px 4px #999;
+    box-shadow: 2px 3px 4px #888;
 }
 
 .channel-grid {
@@ -71,7 +76,7 @@ button {
     background-color: #fff;
     padding: 5px;
     border-radius: 20px;
-    box-shadow: 2px 3px 4px #999;
+    box-shadow: 2px 3px 4px #888;
 }
 
 .channel-image {
@@ -95,7 +100,7 @@ button {
 .active-show {
     align-items: center;
     transition: transform 0.2s ease;
-    transform: scale(1.0);
+    transform: scale(1);
 }
 
 .tv-button:hover,
@@ -123,7 +128,7 @@ button {
     border-radius: 20px;
     background-color: white;
     margin-bottom: 20px;
-    box-shadow: 2px 3px 4px #999;
+    box-shadow: 2px 3px 4px #888;
 }
 
 .tv-control,
@@ -190,7 +195,7 @@ i {
     border: none;
     border-radius: 50px;
     cursor: pointer;
-    box-shadow: 2px 3px 4px #999;
+    box-shadow: 2px 3px 4px #888;
 }
 
 .scan-button input[type="checkbox"]:checked+label {
@@ -205,21 +210,54 @@ i {
     flex-wrap: wrap;
 }
 
-#epg {
-    display: flex;
+.epg {
+    background-color: #fff;
+    width: 100%;
     border-radius: 20px;
-    background-color: white;
     margin-top: 20px;
-    box-shadow: 2px 3px 4px #999
+    box-shadow: 2px 3px 4px #888;
 }
 
-#epg th {
+#epg {
+    max-height: 30em;
+    overflow-x: hidden;
+    overflow-y: visible;
+    scrollbar-width: none;
+}
+
+#epg-h {
+    max-height: 15em;
+    overflow-x: visible;
+    overflow-y: hidden;
+}
+
+.table-price th {
     display: none;
 }
 
-#epg td {
+.epg td {
     margin: auto;
-    padding: 5px
+    padding: 5px;
+}
+
+#epg-h table td:nth-child(1) {
+    pointer-events: none;
+    z-index: 10;
+    background-color: #888;
+    left: 0;
+    position: sticky;
+}
+
+#epg table tr:nth-child(2) {
+    pointer-events: none;
+    z-index: 10;
+    top: 0;
+    position: sticky;
+    background-color: #888;
+}
+
+table tr:last-child {
+    border: 0;
 }
 
 .nav-selector {
@@ -231,7 +269,20 @@ i {
     margin: 10px;
     font-size: 20px;
 }
-.active-show{
-    transition: transform 0.2s ease;
-    transform: scale(1.0);
+
+.epg .active-show {
+    background-color: #5fa964;
+}
+
+#epg-h table .active-show:hover::after {
+    background-color: #5fa964;
+    content: "";
+    height: 500%;
+    width: 100%;
+    top: -100%;
+    bottom: 100%;
+    left: 0;
+    right: 0;
+    position: absolute;
+    z-index: -1;
 }

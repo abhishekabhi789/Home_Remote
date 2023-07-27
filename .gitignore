@@ -6,3 +6,6 @@ test/
 lib/
 include/
 AndroidApp/.idea/deploymentTargetDropDown.xml
+#for debugging, create these file with content
+epg
+uptime

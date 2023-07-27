@@ -123,11 +123,7 @@ function removeUnwantedChannels() {
             let margin = 15; //minutes
             if (timetoshow < margin) {
                 let code = channelCodes[name];
-                channel.parentNode.addEventListener("click", function () {
-                    event.preventDefault();
-                    switchchannel(code);
-                });
-                channel.parentElement.setAttribute("style", "background-color: lightgreen;")
+                channel.parentElement.onclick = function () { switchchannel(code); };
                 channel.parentElement.className = "active-show";
 
             }
@@ -190,7 +186,45 @@ function updateUpTime() {
         return;
     }
 }
+function makeHorizontalTable() {
+    var rows = document.querySelectorAll(".table-price tr");
+    let n_of_h = rows[1].getElementsByTagName("td").length;
+    var hTable = document.createElement("table");
+    hTable.setAttribute("id", "horizontal-table");
+    for (i = 0; i < n_of_h; i++) {
+        let tr = document.createElement("tr");
+        for (j = 1; j < rows.length - 1; j++) {
+            let element = rows[j].getElementsByTagName("td")[i];
+            let td = document.createElement("td");
+            td.innerHTML = element.innerHTML;
+            if (rows[j].hasAttribute("class")) {
+                let originalElement = rows[j];
+                let clickListener = originalElement.onclick;
+                td.onclick = clickListener;
+                td.className = 'active-show';
+            }
+            tr.appendChild(td);
+        }
+        hTable.appendChild(tr);
+    }
+    document.getElementById("epg-h").appendChild(hTable);
+}
+function switchTable() {
+    if (window.innerWidth > window.innerHeight) {
+        document.getElementById("epg-h").style.display = 'block';
+        document.getElementById("epg").style.display = 'none';
+    } else {
+        document.getElementById("epg").style.display = 'block';
+        document.getElementById("epg-h").style.display = 'none';
+    }
+}
+window.addEventListener('resize', function () {
+    switchTable();
+});
 setInterval(updateUpTime, 1000);
 window.onload = function exampleFunction() {
     getEpg();
+    makeHorizontalTable();
+    switchTable();
 }
+
