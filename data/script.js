@@ -72,12 +72,35 @@ function getMinutesFromNow(timeString) {
     const [hour, minute] = time.split(/[:.]+/).map(Number);
     let hours = hour % 12;
     hours = (ampm == "PM") ? 12 + hours : hours;
-    let totalMinutes = hours * 60;
-    totalMinutes += minute - (now.getHours() * 60 + now.getMinutes());
+    let totalMinutes = hours * 60 + minute;
+    totalMinutes -= (now.getHours() * 60 + now.getMinutes());
     return totalMinutes;
 }
 function getRows() {
     return document.querySelectorAll(".table-price tr");
+}
+
+function removeUnwantedChannels() {
+    const myChannels = ["MAZHAVIL MANORAMA", "KAIRALI TV", "KAIRALI WE TV", "AMRITA TV", "DD MALAYALAM"];
+    var rows = getRows();
+    for (i = 2; i < (rows.length - 1); i++) {
+        let channel = rows[i].getElementsByTagName("td")[1];
+        let name = channel.innerHTML.toUpperCase();
+        let removIt = myChannels.find(item => item === name);
+        if (!removIt) {
+            rows[i].parentNode.removeChild(rows[i]);
+        }
+    }
+}
+function removeOldItems() {
+    var rows = getRows();
+    for (i = 2; i < (rows.length - 2); i++) {
+        let margin = 2;//hours
+        let time = rows[i].getElementsByTagName("td")[0];
+        if ((getMinutesFromNow(time.innerHTML) < -(margin * 60)) ? true : false) {
+            rows[i].parentNode.removeChild(rows[i]);
+        }
+    }
 }
 function sortTable() {
     var rows, switching, i, x, y, shouldSwitch;
@@ -100,31 +123,10 @@ function sortTable() {
         }
     }
 }
-function removeOldItems() {
-    var rows = getRows();
-    for (i = 2; i < (rows.length - 2); i++) {
-        let time = rows[i].getElementsByTagName("td")[0];
-        if ((getMinutesFromNow(time.innerHTML) < - (2 * 60)) ? true : false) {
-            rows[i].parentNode.removeChild(rows[i]);
-        }
-    }
-}
-function removeUnwantedChannels() {
-    const myChannels = ["MAZHAVIL MANORAMA", "KAIRALI TV", "KAIRALI WE TV", "AMRITA TV", "DD MALAYALAM"];
-    var rows = getRows();
-    for (i = 2; i < (rows.length - 1); i++) {
-        let channel = rows[i].getElementsByTagName("td")[1];
-        let name = channel.innerHTML.toUpperCase();
-        let removIt = myChannels.find(item => item === name);
-        if (!removIt) {
-            rows[i].parentNode.removeChild(rows[i]);
-        }
-    }
-}
 function highlightActiveShows() {
     const channelCodes = { "MAZHAVIL MANORAMA": 856, "KAIRALI TV": 214, "KAIRALI WE TV": 215, "AMRITA TV": 217, "DD MALAYALAM": 218 };
     var rows = getRows();
-    for (i = 2; i < rows.length-1; i++) {
+    for (let i = 2; i < rows.length - 1; i++) {
         let showtime = rows[i].getElementsByTagName("td")[0];
         let timetoshow = getMinutesFromNow(showtime.innerHTML);
         let channel = rows[i].getElementsByTagName("td")[1];
@@ -157,7 +159,7 @@ function getEpg() {
     xhr.send(null);
 }
 
-function format(seconds) {
+function formatTime(seconds) {
     function pad(s) {
         return (s < 10) ? '0' + s : s;
     }
@@ -181,19 +183,15 @@ function getUpTime() {
     xhr.send(null);
 }
 function setUpTime() {
-    document.getElementById("uptime").style.visibility = "visible"
-    updateUpTime
-}
-function updateUpTime() {
-    if (UpTime > 0) {
+    document.getElementById("uptime").style.visibility = "visible";
+    setInterval(updateUpTime, 1000);
+    function updateUpTime() {
         UpTime++;
-        let str_uptime = format(UpTime);
+        let str_uptime = formatTime(UpTime);
         document.getElementById("uptime_string").innerText = str_uptime;
-    } else {
-        getUpTime();
-        return;
     }
 }
+
 function makeHorizontalTable() {
     var rows = document.querySelectorAll(".table-price tr");
     let n_of_h = rows[1].getElementsByTagName("td").length;
@@ -229,7 +227,7 @@ function switchTable() {
 window.addEventListener('resize', function () {
     switchTable();
 });
-setInterval(updateUpTime, 1000);
+getUpTime();
 window.onload = function exampleFunction() {
     getEpg();
     makeHorizontalTable();
