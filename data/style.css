@@ -3,15 +3,19 @@ body {
     background-color: #f5f5f5;
     margin: auto;
     padding: 10px;
+    /* prevent text selection */
     -webkit-user-select: none;
     -khtml-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     -o-user-select: none;
     user-select: none;
+    /* default body colors */
     color: black;
+    background-color: #f5f5f5;
 }
 
+/* Hide all scrollbars */
 body::-webkit-scrollbar,
 .epg::-webkit-scrollbar {
     width: 0;
@@ -20,16 +24,19 @@ body::-webkit-scrollbar,
 .night-mode-button {
     z-index: 1;
     position: fixed;
-    width: 30px;
-    height: auto;
+    padding-right: 10px;
+    width: 50px;
+    height: 50px;
     top: 5px;
     right: 5px;
+    /* color needs to be defined here, otherwise may follow button theming */
     color: #333;
     background-color: white;
-    border-radius: 20px;
+    border-radius: 50px;
     box-shadow: 2px 3px 4px #555;
 }
 
+/* night mode colors */
 .night-mode {
     color: #f5f5f5;
     background-color: #333;
@@ -69,6 +76,7 @@ button {
 }
 
 .channel-card {
+    cursor: pointer;
     position: relative;
     width: 80px;
     height: 80px;
@@ -150,23 +158,18 @@ button {
 
 .navigation-buttons {
     width: fit-content;
-    height: auto;
-    color: black;
     border-radius: 50%;
     margin: 10px auto;
     padding: 10px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 0px 10px #0000001a;
 }
 
 .navigation-button {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    border: none;
-    color: white;
-    background-color: dodgerblue;
+    background-color: #1e90ff;
     font-size: 25px;
-    position: relative;
 }
 
 .navigation-button i,
@@ -183,24 +186,14 @@ i {
 }
 
 .scan-button label {
-    display: inline-block;
     padding: 10px 20px;
     margin: 5px;
-    font-size: 16px;
     font-weight: bold;
-    text-align: center;
-    text-decoration: none;
     color: #fff;
     background-color: #6aca6d;
-    border: none;
     border-radius: 50px;
     cursor: pointer;
     box-shadow: 2px 3px 4px #888;
-}
-
-.scan-button input[type="checkbox"]:checked+label {
-    border: 2px solid green;
-    background-color: #4a9e4f;
 }
 
 .button-group {
@@ -210,8 +203,21 @@ i {
     flex-wrap: wrap;
 }
 
+.nav-selector {
+    display: none;
+}
+.nav-inline label{
+cursor: pointer;}
+
+.uptime {
+    visibility: hidden;
+    margin: 10px;
+    font-size: 20px;
+}
+
 .epg {
     background-color: #fff;
+    cursor: pointer;
     width: 100%;
     border-radius: 20px;
     margin-top: 20px;
@@ -222,7 +228,6 @@ i {
     max-height: 30em;
     overflow-x: hidden;
     overflow-y: visible;
-    scrollbar-width: none;
 }
 
 #epg-h {
@@ -236,53 +241,36 @@ i {
 }
 
 .epg td {
-    margin: auto;
     padding: 5px;
 }
 
 #epg-h table td:nth-child(1) {
-    pointer-events: none;
-    z-index: 10;
-    background-color: #888;
     left: 0;
+    z-index: 10;
     position: sticky;
+    pointer-events: none;
+    background-color: #888;
 }
 
 #epg table tr:nth-child(2) {
-    pointer-events: none;
-    z-index: 10;
     top: 0;
+    z-index: 10;
     position: sticky;
+    pointer-events: none;
     background-color: #888;
 }
 
-table tr:last-child {
-    border: 0;
-}
-
-.nav-selector {
-    display: none;
-}
-
-.uptime {
-    visibility: hidden;
-    margin: 10px;
-    font-size: 20px;
-}
-
 .epg .active-show {
-    background-color: #5fa964;
-}
+    background-color: #5fa9646e;
+} 
 
-#epg-h table .active-show:hover::after {
-    background-color: #5fa964;
-    content: "";
-    height: 500%;
-    width: 100%;
-    top: -100%;
-    bottom: 100%;
+#epg-h .active-show:hover::after {
+    background-color: #5fa96453;
+    content: '';
+    height: 1000%;
     left: 0;
-    right: 0;
     position: absolute;
-    z-index: -1;
+    top: -500%;
+    width: 100%;
+    z-index: -3;
 }

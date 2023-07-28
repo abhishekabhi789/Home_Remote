@@ -76,13 +76,15 @@ function getMinutesFromNow(timeString) {
     totalMinutes += minute - (now.getHours() * 60 + now.getMinutes());
     return totalMinutes;
 }
-
+function getRows() {
+    return document.querySelectorAll(".table-price tr");
+}
 function sortTable() {
     var rows, switching, i, x, y, shouldSwitch;
     switching = true;
     while (switching) {
         switching = false;
-        rows = document.querySelectorAll(".table-price tr");
+        rows = getRows();
         for (i = 2; i < (rows.length - 1); i++) {
             shouldSwitch = false;
             x = rows[i].getElementsByTagName("td")[0];
@@ -99,7 +101,7 @@ function sortTable() {
     }
 }
 function removeOldItems() {
-    var rows = document.querySelectorAll(".table-price tr");
+    var rows = getRows();
     for (i = 2; i < (rows.length - 2); i++) {
         let time = rows[i].getElementsByTagName("td")[0];
         if ((getMinutesFromNow(time.innerHTML) < - (2 * 60)) ? true : false) {
@@ -109,24 +111,29 @@ function removeOldItems() {
 }
 function removeUnwantedChannels() {
     const myChannels = ["MAZHAVIL MANORAMA", "KAIRALI TV", "KAIRALI WE TV", "AMRITA TV", "DD MALAYALAM"];
-    const channelCodes = { "MAZHAVIL MANORAMA": 856, "KAIRALI TV": 214, "KAIRALI WE TV": 215, "AMRITA TV": 217, "DD MALAYALAM": 218 };
-    var rows = document.querySelectorAll(".table-price tr");
+    var rows = getRows();
     for (i = 2; i < (rows.length - 1); i++) {
         let channel = rows[i].getElementsByTagName("td")[1];
         let name = channel.innerHTML.toUpperCase();
         let removIt = myChannels.find(item => item === name);
         if (!removIt) {
             rows[i].parentNode.removeChild(rows[i]);
-        } else {
-            let showtime = rows[i].getElementsByTagName("td")[0];
-            let timetoshow = getMinutesFromNow(showtime.innerHTML);
-            let margin = 15; //minutes
-            if (timetoshow < margin) {
-                let code = channelCodes[name];
-                channel.parentElement.onclick = function () { switchchannel(code); };
-                channel.parentElement.className = "active-show";
-
-            }
+        }
+    }
+}
+function highlightActiveShows() {
+    const channelCodes = { "MAZHAVIL MANORAMA": 856, "KAIRALI TV": 214, "KAIRALI WE TV": 215, "AMRITA TV": 217, "DD MALAYALAM": 218 };
+    var rows = getRows();
+    for (i = 2; i < rows.length-1; i++) {
+        let showtime = rows[i].getElementsByTagName("td")[0];
+        let timetoshow = getMinutesFromNow(showtime.innerHTML);
+        let channel = rows[i].getElementsByTagName("td")[1];
+        let name = channel.innerHTML.toUpperCase();
+        let margin = 15; //minutes
+        if (timetoshow < margin) {
+            let code = channelCodes[name];
+            channel.parentElement.onclick = function () { switchchannel(code); };
+            channel.parentElement.className = "active-show";
         }
     }
 }
@@ -144,6 +151,7 @@ function getEpg() {
         removeUnwantedChannels();
         removeOldItems();
         sortTable();
+        highlightActiveShows();
     }
     xhr.open('GET', `${host}/epg`, false);
     xhr.send(null);
