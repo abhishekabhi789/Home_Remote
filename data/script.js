@@ -57,13 +57,44 @@ function stopScan() {
     let scanButton = document.getElementById('scan-btn');
     if (scanButton.checked) scanButton.checked = false;
 }
-function toggleNightMode() {
-    const body = document.body;
-    const nightModeButton = document.querySelector('.night-mode-button');
-    const isNightMode = body.classList.toggle('night-mode');
-    nightModeButton.innerHTML = isNightMode ? '<i class="fa fa-sun-o"></i>' : '<i class="fa fa-moon-o"></i>';
-    nightModeButton.style.backgroundColor = isNightMode ? '#333' : '';
-    nightModeButton.style.color = isNightMode ? '#f5f5f5' : '';
+function getCurrentTheme() {
+    let mediaTheme = (window.matchMedia && window.matchMedia("(prefers-color-scheme:dark)").matches) ? 'dark' : 'light';
+    let manualTheme = document.documentElement.classList.value
+    let currentTheme = document.documentElement.classList.value === "" ? mediaTheme : manualTheme;
+    return currentTheme;
+}
+function setTheme(theme) {
+    let button = document.querySelector('.theme-toggle-button');
+    switch (theme) {
+        case 'dark': {
+            document.documentElement.classList.remove("light")
+            document.documentElement.classList.add("dark")
+            button.innerHTML = '<i class="fa fa-moon-o"></i>';
+            localStorage.setItem("userTheme", "dark")
+            break;
+        }
+        case 'light': {
+            document.documentElement.classList.remove("dark")
+            document.documentElement.classList.add("light")
+            localStorage.setItem("userTheme", "light")
+            button.innerHTML = '<i class="fa fa-sun-o"></i>';
+            break;
+        }
+        default: {
+            localStorage.setItem("userTheme", "default");
+            document.documentElement.classList.remove("dark");
+            document.documentElement.classList.remove("light");
+            button.innerHTML = '<i class="fa fa-adjust"></i>';
+            break;
+        }
+    }
+}
+
+function toggleTheme() {
+    // source: https://stackoverflow.com/a/68824350
+    let currentChoice = localStorage.getItem("userTheme")
+    let nextTheme = (currentChoice === "light") ? "dark" : (currentChoice === "dark") ? "default" : "light";
+    setTheme(nextTheme);
 }
 
 function getMinutesFromNow(timeString) {
@@ -94,9 +125,11 @@ function removeUnwantedChannels() {
 }
 function removeOldItems() {
     var rows = getRows();
-    for (i = 2; i < (rows.length - 2); i++) {
+    for (i = 2; i < (rows.length); i++) {
         let margin = 2;//hours
         let time = rows[i].getElementsByTagName("td")[0];
+        //remove style attribute of td[0]
+        time.style = null;
         if ((getMinutesFromNow(time.innerHTML) < -(margin * 60)) ? true : false) {
             rows[i].parentNode.removeChild(rows[i]);
         }
@@ -108,7 +141,7 @@ function sortTable() {
     while (switching) {
         switching = false;
         rows = getRows();
-        for (i = 2; i < (rows.length - 1); i++) {
+        for (i = 2; i < (rows.length - 2); i++) {
             shouldSwitch = false;
             x = rows[i].getElementsByTagName("td")[0];
             y = rows[i + 1].getElementsByTagName("td")[0];
@@ -166,7 +199,7 @@ function formatTime(seconds) {
     var hours = Math.floor(seconds / (60 * 60));
     var minutes = Math.floor(seconds % (60 * 60) / 60);
     var seconds = Math.floor(seconds % 60);
-    return ` ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+    return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
 }
 
 function getUpTime() {
@@ -224,10 +257,16 @@ function switchTable() {
         document.getElementById("epg-h").style.display = 'none';
     }
 }
+function loadSettings() {
+    //prepare theme
+    let preferedTheme = localStorage.getItem("userTheme")
+    setTheme(preferedTheme)
+}
 window.addEventListener('resize', function () {
     switchTable();
 });
 getUpTime();
+loadSettings();
 window.onload = function exampleFunction() {
     getEpg();
     makeHorizontalTable();

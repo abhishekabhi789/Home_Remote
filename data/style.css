@@ -1,282 +1,341 @@
 * {
-    -webkit-tap-highlight-color: transparent;
+  /* remove touch effect */
+  -webkit-tap-highlight-color: transparent;
 }
 
+/* default theme/light */
+:root,
+:root.light {
+  --bg-body: #f5f5f5;
+  --fg-nav-icon: #fff;
+  --bg-nav: #fafafa;
+  --fg-button-text: #fff;
+  --fg-text: #000;
+  --bg-card: #fff;
+  --bg-button: #6aca6d;
+  --shadow: 2px 3px 4px #aaa;
+}
+
+@media (prefers-color-scheme: dark) {
+
+  /* system based dark theme */
+  :root {
+    --bg-body: #212121;
+    --fg-nav-icon: #333;
+    --bg-nav: #3a3939;
+    --fg-button-text: #fff;
+    --fg-text: #dadada;
+    --bg-card: #333;
+    --bg-button: #3c673e;
+    --shadow: 2px 3px 4px #666;
+  }
+}
+
+/* custom dark theme */
+:root.dark {
+  --bg-body: #212121;
+  --fg-nav-icon: #333;
+  --bg-nav: #3a3939;
+  --fg-button-text: #fff;
+  --fg-text: #dadada;
+  --bg-card: #333;
+  --bg-button: #3c673e;
+  --shadow: 2px 3px 4px #666;
+}
+
+
 body {
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f5f5f5;
-    margin: auto;
-    padding: 10px;
-    /* prevent text selection */
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    -o-user-select: none;
-    user-select: none;
-    /* default body colors */
-    color: black;
-    background-color: #f5f5f5;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f5f5f5;
+  margin: auto;
+  padding: 10px;
+  /* prevent text selection */
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+  background-color: var(--bg-body);
 }
 
 /* Hide all scrollbars */
 body::-webkit-scrollbar,
 .epg::-webkit-scrollbar {
-    width: 0;
+  display: none;
 }
 
-.night-mode-button {
-    z-index: 1;
-    position: fixed;
-    padding-right: 10px;
-    width: 50px;
-    height: 50px;
-    top: 5px;
-    right: 5px;
-    /* color needs to be defined here, otherwise may follow button theming */
-    color: #333;
-    background-color: white;
-    border-radius: 50px;
-    box-shadow: 2px 3px 4px #555;
+.uptime {
+  /* visibility: hidden; */
+  color: var(--fg-text);
+  position: absolute;
+  margin: 10px;
+  font-size: 20px;
+  top: 5px;
+  left: 10px;
 }
 
-/* night mode colors */
-.night-mode {
-    color: #f5f5f5;
-    background-color: #333;
+.theme-toggle-button {
+  z-index: 1;
+  position: fixed;
+  padding-right: 10px;
+  font-size: x-large;
+  width: 50px;
+  height: 50px;
+  top: 5px;
+  right: 5px;
+  color: var(--fg-text);
+  background-color: var(--bg-card);
+  border-radius: 50px;
+  box-shadow: var(--shadow);
 }
 
-.night-mode .controls,
-.night-mode .epg {
-    color: #f5f5f5;
-    background-color: #333;
+.theme-toggle-button i {
+  font-weight: 100;
+  position: absolute;
+  transform: translate(-50%, -50%);
 }
 
 h2 {
-    margin-top: 30px;
-    color: #666;
+  margin-top: 30px;
+  color: var(--fg-text);
 }
 
 button {
-    padding: 10px 20px;
-    margin: 5px;
-    font-size: 16px;
-    font-weight: bold;
-    text-align: center;
-    text-decoration: none;
-    color: #fff;
-    background-color: #6aca6d;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    border-radius: 50px;
-    box-shadow: 2px 3px 4px #888;
-}
-
-.channel-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    width: 100%;
-}
-
-.channel-card {
-    cursor: pointer;
-    position: relative;
-    width: 80px;
-    height: 80px;
-    margin: 10px;
-    background-color: #fff;
-    padding: 5px;
-    border-radius: 20px;
-    box-shadow: 2px 3px 4px #888;
-}
-
-.channel-image {
-    padding: 10px;
-    width: 60px;
-    height: 60px;
-}
-
-.dth-control,
-.tv-control {
-    padding: 10px;
-    text-align: center;
-}
-
-.tv-button,
-.dth-button,
-.channel-card,
-.navigation-button,
-.night-mode-button,
-.scan-button label,
-.active-show {
-    align-items: center;
-    transition: transform 0.2s ease;
-    transform: scale(1);
-}
-
-.tv-button:hover,
-.dth-button:hover,
-.channel-card:hover,
-.navigation-button:hover,
-.night-mode-button:hover,
-.scan-button label:hover,
-.active-show:hover {
-    transform: scale(1.1);
-}
-
-.tv-button:active,
-.dth-button:active,
-.channel-card:active,
-.navigation-button:active,
-.navigation-button:active,
-.scan-button label:active,
-.active-show:active {
-    transform: scale(0.9);
+  /* general button theme */
+  padding: 10px 20px;
+  margin: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  text-decoration: none;
+  color: var(--fg-button-text);
+  background-color: var(--bg-button);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  border-radius: 50px;
+  box-shadow: var(--shadow);
 }
 
 .controls {
-    display: flex;
-    border-radius: 20px;
-    background-color: white;
-    margin-bottom: 20px;
-    box-shadow: 2px 3px 4px #888;
+  /* this wraps the tv and dth control */
+  background-color: var(--bg-card);
+  display: flex;
+  border-radius: 20px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+
+  text-align: center;
 }
 
 .tv-control,
 .dth-control {
-    flex: 1;
+  flex: 1;
 }
 
 @media (orientation: landscape) {
-    .controls {
-        flex-direction: row;
-    }
+  .controls {
+    flex-direction: row;
+  }
 }
 
 @media (orientation: portrait) {
-    .controls {
-        flex-direction: column;
-    }
+  .controls {
+    flex-direction: column;
+  }
 }
 
-.navigation-buttons {
-    width: fit-content;
-    border-radius: 50%;
-    margin: 10px auto;
-    padding: 10px;
-    box-shadow: 0px 0px 10px #0000001a;
+button i,
+h2 i,
+.scan-button label i,
+.uptime i {
+  padding-right: 5px;
 }
 
-.navigation-button {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background-color: #1e90ff;
-    font-size: 25px;
-}
 
-.navigation-button i,
-.night-mode-button i {
-    margin-left: -5px;
-}
-
-.nav-inline {
-    font-size: 20px;
-}
-
-i {
-    margin-right: 5px;
-}
 
 .scan-button label {
-    padding: 10px 20px;
-    margin: 5px;
-    font-weight: bold;
-    color: #fff;
-    background-color: #6aca6d;
-    border-radius: 50px;
-    cursor: pointer;
-    box-shadow: 2px 3px 4px #888;
+  padding: 10px 20px;
+  margin: 5px;
+  font-weight: bold;
+  color: var(--fg-button-text);
+  background-color: var(--bg-button);
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+}
+
+.scan-button input[type=checkbox]:checked+label {
+  border: 2px solid green;
 }
 
 .button-group {
-    display: flex;
-    justify-content: center;
-    flex-direction: row;
-    flex-wrap: wrap;
+  /* navigation button group */
+  display: flex;
+  margin: 10px auto;
+  padding: 10px;
+  justify-content: center;
+  flex-direction: row;
+  flex-wrap: wrap;
+  text-align: center;
+
 }
 
 .nav-selector {
-    display: none;
+  /* hiding radios */
+  display: none;
 }
 
-.nav-inline label {
-    cursor: pointer;
+.nav-switcher {
+  font-size: 20px;
+  width: max-content;
 }
 
-.uptime {
-    visibility: hidden;
-    margin: 10px;
-    font-size: 20px;
+.nav-switcher label[for=nav_tv] {
+  color: var(--fg-text);
+  position: relative;
+  padding: 15px 15px;
+  cursor: pointer;
+  left: 0px;
+}
+
+.nav-switcher label[for=nav_dth] {
+  position: relative;
+  right: -80px;
+  padding: 15px 15px;
+  cursor: pointer;
+  filter: grayscale(100%);
+}
+
+.navigation-buttons {
+  /* wraps all nav buttons */
+  width: fit-content;
+  border-radius: 50%;
+  margin: 10px auto;
+  padding: 10px;
+  background-color: var(--bg-nav);
+  box-shadow: var(--shadow);
+}
+
+.navigation-button {
+  /* custom theme for buttons */
+  color: var(--fg-button-text);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #1e90ff;
+  font-size: 25px;
+}
+
+.navigation-button i {
+  position: absolute;
+  transform: translate(-40%, -55%);
+}
+
+.channel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  width: 100%;
+}
+
+.channel-card {
+  cursor: pointer;
+  position: relative;
+  width: 80px;
+  height: 80px;
+  margin: 10px;
+  background-color: white;
+  padding: 5px;
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+}
+
+.channel-image {
+  padding: 10px;
+  width: 60px;
+  height: 60px;
 }
 
 .epg {
-    background-color: #fff;
-    cursor: pointer;
-    width: 100%;
-    border-radius: 20px;
-    margin-top: 20px;
-    box-shadow: 2px 3px 4px #888;
+  color: var(--fg-text);
+  background-color: var(--bg-card);
+  width: 100%;
+  border-radius: 20px;
+  margin-top: 20px;
+  box-shadow: var(--shadow);
 }
 
-#epg {
-    max-height: 30em;
-    overflow-x: hidden;
-    overflow-y: visible;
-}
-
-#epg-h {
-    max-height: 15em;
-    overflow-x: visible;
-    overflow-y: hidden;
+.epg table {
+  width: 100%;
 }
 
 .table-price th {
-    display: none;
+  display: none;
 }
+
+#epg {
+  color: var(--fg-text);
+  max-height: 30em;
+  overflow-x: hidden;
+  overflow-y: visible;
+}
+
+#epg-h {
+  max-height: 15em;
+  overflow-x: visible;
+  overflow-y: hidden;
+}
+
 
 .epg td {
-    padding: 10px;
+  padding: 10px;
 }
 
-#epg-h table td:nth-child(1) {
-    left: 0;
-    z-index: 10;
-    position: sticky;
-    pointer-events: none;
-    background-color: #888;
-}
-
+#epg-h table td:nth-child(1),
 #epg table tr:nth-child(2) {
-    top: 0;
-    z-index: 10;
-    position: sticky;
-    pointer-events: none;
-    background-color: #888;
+  left: 0;
+  z-index: 10;
+  position: sticky;
+  pointer-events: none;
+  background-color: #888;
 }
 
 .epg .active-show {
-    background-color: #5fa9646e;
+  background-color: #33913953;
+  cursor: pointer;
 }
 
 #epg-h .active-show:hover::after {
-    background-color: #5fa96453;
-    content: '';
-    height: 1000%;
-    left: 0;
-    position: absolute;
-    top: -500%;
-    width: 100%;
-    z-index: -3;
+  background-color: #5fa96453;
+  pointer-events: none;
+  content: '';
+  height: 1000%;
+  left: 0;
+  position: absolute;
+  top: -500%;
+  width: 100%;
+  z-index: -1;
+}
+
+/* click animation */
+button,
+.scan-button label,
+.channel-card,
+.active-show {
+  transition: transform 0.2s ease;
+  transform: scale(1);
+}
+
+button:hover,
+.scan-button label:hover,
+.channel-card:hover,
+.active-show:hover {
+  transform: scale(1.1);
+}
+
+button:active,
+.scan-button label:active,
+.channel-card:active,
+.active-show:active {
+  transform: scale(0.9);
 }

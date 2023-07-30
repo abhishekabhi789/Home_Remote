@@ -13,24 +13,24 @@
 <body>
 	<div class="controls">
 		<div id="uptime" class="uptime"><i class="fa fa-clock-o" id="uptime_string"></i></div>
-		<button class="night-mode-button" onclick="toggleNightMode();"><i class="fa fa-moon-o"></i></button>
+		<button class="theme-toggle-button" onclick="toggleTheme()"></button>
 		<div class="tv-control">
 			<h2><i class="fa fa-tv"></i>TV Control</h2>
-			<button class="tv-button" onclick="sendTVCode('power')" style="background-color: red;margin-right: 5px;"><i
-					class="fa fa-power-off"></i>TV
-				Power</button>
-			<br>
-			<button class="tv-button" onclick="sendTVCode('vol_down');"><i class="fa fa-volume-down"></i>Volume
-				-</button>
-			<button class="tv-button" onclick="sendTVCode('vol_up');"><i class="fa fa-volume-up"></i>Volume
-				+</button>
+			<div class="button-group">
+				<button class="tv-button" onclick="sendTVCode('power')"
+					style="background-color: red;margin-right: 5px;"><i class="fa fa-power-off"></i>TV Power</button>
+				<button class="tv-button" onclick="sendTVCode('vol_down');"><i class="fa fa-volume-down"></i>Volume
+					-</button>
+				<button class="tv-button" onclick="sendTVCode('vol_up');"><i class="fa fa-volume-up"></i>Volume
+					+</button>
+			</div>
 		</div>
 		<div class="dth-control">
 			<h2><img src="https://www.sundirect.in/Content/Admin/images/favicon.ico"
 					style="height:0.7em; margin-right: 4px; filter: grayscale(100%);">DTH Control
 			</h2>
-			<div class="button-group"> <button class="dth-button" onclick="sendDthCode('mute');"><i
-						class="fa fa-volume-off"></i>Mute</button>
+			<div class="button-group">
+				<button class="dth-button" onclick="sendDthCode('mute');"><i class="fa fa-volume-off"></i>Mute</button>
 				<div class="scan-button">
 					<input type="checkbox" id="scan-btn" style="display: none;" onchange="scanChannels(this);">
 					<label for="scan-btn"><i class="fa fa-search"></i>Scan</label>
@@ -39,15 +39,14 @@
 						class=" fa fa-step-backward"></i>Previous</button>
 			</div>
 			<div class="navigation-buttons">
-				<div class="nav-inline">
-					<input type="radio" name="navigation" id="nav_tv" class="nav-selector"
-						value="tv" onclick="changeNav(this)">
-					<label for="nav_tv"><i class="fa fa-tv" style="margin-right: 50px;"></i></label>
+				<div class="nav-switcher">
+					<input type="radio" name="navigation" id="nav_tv" class="nav-selector" value="tv"
+						onclick="changeNav(this)">
+					<label for="nav_tv"><i class="fa fa-tv"></i></label>
 					<input type="radio" name="navigation" id="nav_dth" class="nav-selector" value="dth"
 						onclick="changeNav(this)" checked>
-						<label for="nav_dth"><img
-							src="https://www.sundirect.in/Content/Admin/images/favicon.ico"
-							style="height:0.7em; margin-right: 4px; filter: grayscale(100%);margin-left: 50px;"></label><br>
+					<label for="nav_dth"><img src="https://www.sundirect.in/Content/Admin/images/favicon.ico"
+							style="height: 0.7em;"></label><br>
 				</div>
 				<button class="navigation-button" onclick="sendNavigation('nav_up');"><i
 						class="fa fa-chevron-up"></i></button><br>
@@ -60,8 +59,11 @@
 				<button class="navigation-button" onclick="sendNavigation('nav_down');"><i
 						class="fa fa-chevron-down"></i></button>
 			</div>
-			<button class="dth-button" onclick="sendNavigation('menu');"><i class="fa fa-bars"></i>Menu</button>
-			<button class="dth-button" onclick="sendNavigation('back');"><i class="fa fa-arrow-right"></i>Back</button>
+			<div class="button-group">
+				<button class="dth-button" onclick="sendNavigation('menu');"><i class="fa fa-bars"></i>Menu</button>
+				<button class="dth-button" onclick="sendNavigation('back');"><i
+						class="fa fa-arrow-right"></i>Back</button>
+			</div>
 		</div>
 	</div>
 	<div class="channel-grid">
@@ -76,7 +78,7 @@
 				alt="Mazhavil Manorama">
 		</div>
 		<div class="channel-card" onclick="switchchannel(214);"> <img class="channel-image"
-				src="https://upload.wikimedia.org/wikipedia/en/6/6e/Kairali_TV.svg" alt="Kairali">
+				src="https://upload.wikimedia.org/wikipedia/en/6/6e/Kairali_TV.svg" alt="Kairali TV">
 		</div>
 		<div class="channel-card" onclick="switchchannel(215);"> <img class="channel-image"
 				src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Kairali_WE_TV_Logo.png/213px-Kairali_WE_TV_Logo.png"
@@ -110,7 +112,7 @@
 				src="https://upload.wikimedia.org/wikipedia/commons/7/70/Mathrubhumi_news.svg" alt="Mathrubhumi News">
 		</div>
 		<div class="channel-card" onclick="switchchannel(240);"> <img class="channel-image"
-				src="https://upload.wikimedia.org/wikipedia/commons/6/60/Reporter_TV_2023.jpg" alt="Reporter">
+				src="https://upload.wikimedia.org/wikipedia/commons/6/60/Reporter_TV_2023.jpg" alt="Reporter TV">
 		</div>
 	</div>
 	<div id="epg" class="epg"></div>

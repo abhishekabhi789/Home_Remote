@@ -34,6 +34,7 @@ class MainActivity : Activity() {
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout)
         val webSettings = webView.settings
         webSettings.javaScriptEnabled = true //needed to send commands
+        webSettings.domStorageEnabled = true // To store configurations
         webSettings.allowContentAccess = false //revoking unnecessary vulnerable permission
         webSettings.allowFileAccess = false //revoking unnecessary vulnerable permission
         webSettings.cacheMode = WebSettings.LOAD_DEFAULT

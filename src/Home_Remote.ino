@@ -14,7 +14,7 @@ const int CH_SCAN_INTERVAL = 6000;
 const int WIFI_SCAN_INTERVAL = 5000;
 const char *ssid = SSID;
 const char *password = PASSWORD;
-const int COMMAND_INTERVAL = 250;
+const int COMMAND_INTERVAL = 350;
 const int SEND_PIN = 3;
 const int DTH_COMMAND_REPEAT = 2;
 
