@@ -1,5 +1,34 @@
 var UpTime = 0;
+let tooltipTimeout = null;
+
+function getId(item) {
+    return document.getElementById(item);
+}
+const micButton = getId("voiceInput")
+const tooltipText = getId("tooltip-text")
 adjustDivStyle(currentNavMode().value);
+var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
+var SpeechGrammarList = SpeechGrammarList || webkitSpeechGrammarList;
+var SpeechRecognitionEvent = SpeechRecognitionEvent || webkitSpeechRecognitionEvent;
+var recognition = new SpeechRecognition();
+const basicCommands = {
+    "CHANNEL UP": "nav_up", "CHANNEL DOWN": "nav_down", "PREVIOUS": "last_ch",
+    "VOLUME UP": "vol_up", "VOLUME DOWN": "vol_down", "MUTE": "mute", "OK": "ok", "BACK": "back"
+}
+const channelCommands = {
+    "FLOWERS": 207, "ASIANET NEWS": 233, "MAZHAVIL MANORAMA": 856,
+    "KAIRALI TV": 214, "KAIRALI WE": 215, "SAFARI": 247, "AMRITA TV": 217,
+    "JAI HIND": 220, "DD MALAYALAM": 218, "TWENTY FOUR": 239, "KAIRALI NEWS": 236,
+    "MANORAMA NEWS": 235, "MATHRUBHUMI NEWS": 234, "REPORTER TV": 240
+};
+
+//const commands = basicCommands + channelCommands;
+// if (SpeechGrammarList) {
+//     var speechRecognitionList = new SpeechGrammarList();
+//     var grammar = '#JSGF V1.0; grammar commands; public <commands> = ' + commands.join(' | ') + ' ;';
+//     speechRecognitionList.addFromString(grammar, 1);
+//     recognition.grammars = speechRecognitionList;
+// }
 
 function adjustDivStyle(selected) {
     let navButtons = document.getElementsByClassName('navigation-buttons')[0]
@@ -114,7 +143,7 @@ function getRows() {
 function removeUnwantedChannels() {
     const myChannels = ["MAZHAVIL MANORAMA", "KAIRALI TV", "KAIRALI WE TV", "AMRITA TV", "DD MALAYALAM"];
     var rows = getRows();
-    for (i = 2; i < (rows.length - 1); i++) {
+    for (i = 2; i < (rows.length); i++) {
         let channel = rows[i].getElementsByTagName("td")[1];
         let name = channel.innerHTML.toUpperCase();
         let removIt = myChannels.find(item => item === name);
@@ -159,7 +188,7 @@ function sortTable() {
 function highlightActiveShows() {
     const channelCodes = { "MAZHAVIL MANORAMA": 856, "KAIRALI TV": 214, "KAIRALI WE TV": 215, "AMRITA TV": 217, "DD MALAYALAM": 218 };
     var rows = getRows();
-    for (let i = 2; i < rows.length - 1; i++) {
+    for (let i = 2; i < rows.length - 2; i++) {
         let showtime = rows[i].getElementsByTagName("td")[0];
         let timetoshow = getMinutesFromNow(showtime.innerHTML);
         let channel = rows[i].getElementsByTagName("td")[1];
@@ -257,6 +286,87 @@ function switchTable() {
         document.getElementById("epg-h").style.display = 'none';
     }
 }
+async function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function setTooltipText(text) {
+    if (text == undefined) text = '';
+    tooltipText.innerText = text;
+    if (tooltipTimeout) {
+        clearTimeout(tooltipTimeout);
+    }
+    await delay(2000);
+    tooltipText.innerText = '';
+}
+function processVoiceCommand(command) {
+    console.log("Processing :" + command);
+    if (basicCommands.hasOwnProperty(command)) {
+        let thisCommand = basicCommands[command];
+        setTooltipText('sending ' + thisCommand);
+        sendDthCode(thisCommand);
+        return;
+    } else {
+        let chName = Object.keys(channelCommands).find(key => key.includes(command));
+        if (chName) {
+            let thisCommand = channelCommands[chName];
+            switchchannel(thisCommand);
+            chName = chName.replace(/(\w)(\w*)/g,
+                function (g0, g1, g2) { return g1.toUpperCase() + g2.toLowerCase(); });
+            setTooltipText('switching to ' + chName);
+            return;
+        } else {
+            console.log(`No matching command found for "${command}"`);
+        }
+    }
+    setTimeout(setTooltipText, 3000);
+}
+function prepareToListen() {
+    recognition.continuous = false;
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+}
+
+recognition.onresult = function (event) {
+    var command = event.results[0][0].transcript.toUpperCase();
+    console.log(event)
+    console.log(command + " " + event.results[0][0].confidence);
+    setTooltipText(command);
+    processVoiceCommand(command);
+}
+
+recognition.onspeechend = function () {
+    recognition.stop();
+    stopListening("speech end");
+}
+
+recognition.onnomatch = function () {
+    stopListening("no match");
+    setTooltipText('No match!');
+}
+
+recognition.onerror = function (event) {
+    console.log(event.error)
+    setTooltipText('Error!');
+    stopListening("error occured");
+}
+micButton.onclick = function () {
+    recognition.abort();
+    micButton.classList.toggle('recording');
+    if (micButton.classList.contains('recording')) {
+        setTooltipText('Listening...');
+    } else {
+        setTooltipText('');
+        setTimeout(setTooltipText, 3000);
+    }
+    setTimeout(function () { recognition.start(); }, 500);
+    console.log('Ready to receive a command.');
+}
+function stopListening(reason) {
+    console.log("stopping listning: " + reason);
+    micButton.classList.remove('recording');
+}
 function loadSettings() {
     //prepare theme
     let preferedTheme = localStorage.getItem("userTheme")
@@ -271,5 +381,6 @@ window.onload = function exampleFunction() {
     getEpg();
     makeHorizontalTable();
     switchTable();
+    prepareToListen();
 }
 
