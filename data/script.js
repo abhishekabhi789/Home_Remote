@@ -40,6 +40,22 @@ function adjustDivStyle(selected) {
         navButtons.style.borderTopRightRadius = "20px"
     }
 }
+function generateChannelCards(channels) {
+    const container = document.getElementById('channel-grid');
+    channels.forEach((channel) => {
+        const channelCard = document.createElement('div');
+        channelCard.classList.add('channel-card');
+        channelCard.setAttribute('onclick', `switchchannel(${channel.ch_num});`);
+
+        const channelImage = document.createElement('img');
+        channelImage.classList.add('channel-image');
+        channelImage.setAttribute('src', channel.logoUrl);
+        channelImage.setAttribute('alt', channel.name);
+
+        channelCard.appendChild(channelImage);
+        container.appendChild(channelCard);
+    });
+}
 function currentNavMode() {
     return document.querySelector('input[name="navigation"]:checked');
 
@@ -367,6 +383,19 @@ function stopListening(reason) {
     console.log("stopping listning: " + reason);
     micButton.classList.remove('recording');
 }
+function setChannelCards(){
+    let xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+            let data = xhr.responseText;
+            data = JSON.parse(data);
+            generateChannelCards(data.channels)
+        }
+    }
+    xhr.open('GET', `${host}/channeldata`, false);
+    xhr.send(null);
+}
+
 function loadSettings() {
     //prepare theme
     let preferedTheme = localStorage.getItem("userTheme")
@@ -376,8 +405,10 @@ window.addEventListener('resize', function () {
     switchTable();
 });
 getUpTime();
+setChannelCards();
 loadSettings();
-window.onload = function exampleFunction() {
+
+window.onload = function onloadFunction() {
     getEpg();
     makeHorizontalTable();
     switchTable();

@@ -12,6 +12,19 @@ const char *PASSWORD = "my_wifi_Password123";
 const char *OTA_USERNAME = "MyOtaUserName";
 const char *OTA_PASSWORD = "myOtA_passw0rd456";
 ```
+#### sample `../Home_Remote/data/channeldata` file
+
+```json
+{
+  "channels": [
+    {
+      "ch_num": 123, //stb channel number
+      "name": "Channel Name",
+      "logoUrl": "https://example.com/channel_logo.png"
+    }
+  ]
+}
+```
 
 An [Android App](AndroidApp/app/debug/app-debug.apk) is included which works only with `http://{ipaddress}/remote` urls.
 
