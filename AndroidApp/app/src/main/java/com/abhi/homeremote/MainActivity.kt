@@ -1,25 +1,34 @@
 package com.abhi.homeremote
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.DialogInterface
+import android.content.pm.PackageManager
 import android.graphics.Typeface
 import android.os.Bundle
 import android.text.InputType
 import android.util.Log
 import android.view.WindowManager
+import android.webkit.PermissionRequest
+import android.webkit.WebChromeClient
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.EditText
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 
 class MainActivity : Activity() {
     private lateinit var webView: WebView
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private val TAG = javaClass.simpleName
+    private val PERMISSION_REQUEST_CODE = 123
 
+    @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED)
@@ -38,20 +47,49 @@ class MainActivity : Activity() {
         webSettings.allowContentAccess = false //revoking unnecessary vulnerable permission
         webSettings.allowFileAccess = false //revoking unnecessary vulnerable permission
         webSettings.cacheMode = WebSettings.LOAD_DEFAULT
-        webView.loadUrl(url)
         webView.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
                 swipeRefreshLayout.isRefreshing = false
             }
         }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+            setupWebChromeClient()
+        } else {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), PERMISSION_REQUEST_CODE)
+        }
+        webView.webChromeClient = object : WebChromeClient() {
+            override fun onPermissionRequest(request: PermissionRequest) {
+                runOnUiThread {
+                    request.grant(request.resources)
+                }
+            }
+        }
+
+        webView.loadUrl(url)
         swipeRefreshLayout.setOnRefreshListener {
             webView.clearCache(false)
             webView.clearHistory()
             webView.reload()
         }
     }
-
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                setupWebChromeClient()
+            } else {
+                Toast.makeText(this, "Voice control won't work", Toast.LENGTH_SHORT).show()            }
+        }
+    }
+    private fun setupWebChromeClient() {
+        webView.webChromeClient = object : WebChromeClient() {
+            override fun onPermissionRequest(request: PermissionRequest) {
+                runOnUiThread {
+                    request.grant(request.resources)
+                }
+            }
+        }
+    }
     private fun saveUrlToPreference(url: String) {
         val sharedPreferences = getSharedPreferences("AppPreferences", MODE_PRIVATE)
         val editor = sharedPreferences.edit()
