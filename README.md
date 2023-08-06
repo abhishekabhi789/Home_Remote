@@ -22,7 +22,8 @@ const char *OTA_PASSWORD = "myOtA_passw0rd456";
       "name": "Channel Name",
       "logoUrl": "https://example.com/channel_logo.png"
     }
-  ]
+   ],
+  "movieChannels":[]//Channel name filter for epg
 }
 ```
 

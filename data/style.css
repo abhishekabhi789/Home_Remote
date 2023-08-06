@@ -172,7 +172,6 @@ button {
   border-radius: 20px;
   margin-bottom: 20px;
   box-shadow: var(--shadow);
-
   text-align: center;
 }
 
@@ -199,8 +198,6 @@ h2 i,
 .uptime i {
   padding-right: 5px;
 }
-
-
 
 .scan-button label {
   padding: 10px 20px;
@@ -381,11 +378,13 @@ button,
   transform: scale(1);
 }
 
-button:hover,
-.scan-button label:hover,
-.channel-card:hover,
-.active-show:hover {
-  transform: scale(1.1);
+@media (hover: hover) {
+  button:hover,
+  .scan-button label:hover,
+  .channel-card:hover,
+  .active-show:hover {
+    transform: scale(1.1);
+  }
 }
 
 button:active,
