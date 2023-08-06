@@ -175,8 +175,10 @@ function removeOldItems() {
         let time = rows[i].getElementsByTagName("td")[0];
         //remove style attribute of td[0]
         time.style = null;
-        if ((getMinutesFromNow(time.innerHTML) < -(margin * 60)) ? true : false) {
-            rows[i].parentNode.removeChild(rows[i]);
+        let minutesFromNow = getMinutesFromNow(time.innerHTML)
+        if (minutesFromNow < -(margin * 60)) {
+            //rows[i].parentNode.removeChild(rows[i]);
+            rows[i].className = 'past-show'
         }
     }
 }
@@ -210,7 +212,8 @@ function highlightActiveShows() {
         let channel = rows[i].getElementsByTagName("td")[1];
         let name = channel.innerHTML.toUpperCase();
         let margin = 15; //minutes
-        if (timetoshow < margin) {
+        let isPastShow = (rows[i].classList.contains('past-show'))
+        if (!isPastShow && timetoshow < margin) {
             let code = channelCodes[name];
             channel.parentElement.onclick = function () { switchchannel(code); };
             channel.parentElement.className = "active-show";
@@ -283,9 +286,8 @@ function makeHorizontalTable() {
             td.innerHTML = element.innerHTML;
             if (rows[j].hasAttribute("class")) {
                 let originalElement = rows[j];
-                let clickListener = originalElement.onclick;
-                td.onclick = clickListener;
-                td.className = 'active-show';
+                td.onclick = originalElement.onclick;
+                td.className = originalElement.className;
             }
             tr.appendChild(td);
         }
@@ -300,6 +302,21 @@ function switchTable() {
     } else {
         document.getElementById("epg").style.display = 'block';
         document.getElementById("epg-h").style.display = 'none';
+    }
+    scrollToActiveShow()
+}
+function scrollToActiveShow() {
+    if ($('#epg').is(':visible')) {
+        let container = $('#epg');
+        let activeShowRow = $('#epg .active-show:first');
+        let offset = container.find('tr:nth-child(2)').height();
+        container.scrollTop(activeShowRow.position().top - offset);
+    } else {
+        let container = $('#epg-h');
+        let activeShowRow = $('#epg-h .active-show:first');
+        let offset = container.find('td:nth-child(1)').width();
+        let tdPadding = parseInt($('td').css('padding'));
+        container.scrollLeft(activeShowRow.position().left - tdPadding - offset);
     }
 }
 async function delay(ms) {
@@ -383,7 +400,7 @@ function stopListening(reason) {
     console.log("stopping listning: " + reason);
     micButton.classList.remove('recording');
 }
-function setChannelCards(){
+function setChannelCards() {
     let xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
         if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
@@ -401,6 +418,13 @@ function loadSettings() {
     let preferedTheme = localStorage.getItem("userTheme")
     setTheme(preferedTheme)
 }
+
+$(document).on('click touchstart', function (e) {
+    if (!$(e.target).closest('.epg').length != 0) {
+        scrollToActiveShow();
+    }
+});
+
 window.addEventListener('resize', function () {
     switchTable();
 });
@@ -408,10 +432,15 @@ getUpTime();
 setChannelCards();
 loadSettings();
 
-window.onload = function onloadFunction() {
+window.onload = function () {
     getEpg();
     makeHorizontalTable();
     switchTable();
     prepareToListen();
+}
+document.onvisibilitychange = function () {
+    if (!document.hidden) {
+        this.location.reload();
+    }
 }
 
