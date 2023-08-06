@@ -1,5 +1,6 @@
 var UpTime = 0;
 let tooltipTimeout = null;
+var allChannels = [];
 
 function getId(item) {
     return document.getElementById(item);
@@ -15,12 +16,6 @@ const basicCommands = {
     "CHANNEL UP": "nav_up", "CHANNEL DOWN": "nav_down", "PREVIOUS": "last_ch",
     "VOLUME UP": "vol_up", "VOLUME DOWN": "vol_down", "MUTE": "mute", "OK": "ok", "BACK": "back"
 }
-const channelCommands = {
-    "FLOWERS": 207, "ASIANET NEWS": 233, "MAZHAVIL MANORAMA": 856,
-    "KAIRALI TV": 214, "KAIRALI WE": 215, "SAFARI": 247, "AMRITA TV": 217,
-    "JAI HIND": 220, "DD MALAYALAM": 218, "TWENTY FOUR": 239, "KAIRALI NEWS": 236,
-    "MANORAMA NEWS": 235, "MATHRUBHUMI NEWS": 234, "REPORTER TV": 240
-};
 
 //const commands = basicCommands + channelCommands;
 // if (SpeechGrammarList) {
@@ -171,13 +166,12 @@ function removeUnwantedChannels() {
 function removeOldItems() {
     var rows = getRows();
     for (i = 2; i < (rows.length); i++) {
-        let margin = 2;//hours
+        let offset = 2;//hours
         let time = rows[i].getElementsByTagName("td")[0];
         //remove style attribute of td[0]
         time.style = null;
         let minutesFromNow = getMinutesFromNow(time.innerHTML)
-        if (minutesFromNow < -(margin * 60)) {
-            //rows[i].parentNode.removeChild(rows[i]);
+        if (minutesFromNow < -(offset * 60)) {
             rows[i].className = 'past-show'
         }
     }
@@ -316,7 +310,7 @@ function scrollToActiveShow() {
         let activeShowRow = $('#epg-h .active-show:first');
         let offset = container.find('td:nth-child(1)').width();
         let tdPadding = parseInt($('td').css('padding'));
-        container.scrollLeft(activeShowRow.position().left - tdPadding - offset);
+        container.scrollLeft(activeShowRow.position().left - offset - (2*tdPadding));
     }
 }
 async function delay(ms) {
@@ -333,23 +327,22 @@ async function setTooltipText(text) {
     tooltipText.innerText = '';
 }
 function processVoiceCommand(command) {
-    console.log("Processing :" + command);
+    console.log("Processing : " + command);
     if (basicCommands.hasOwnProperty(command)) {
         let thisCommand = basicCommands[command];
         setTooltipText('sending ' + thisCommand);
         sendDthCode(thisCommand);
         return;
     } else {
-        let chName = Object.keys(channelCommands).find(key => key.includes(command));
-        if (chName) {
-            let thisCommand = channelCommands[chName];
+        const channel = allChannels.find(it => it.name.toUpperCase() === command);
+        if (channel) {
+            let thisCommand = channel.ch_num;
             switchchannel(thisCommand);
-            chName = chName.replace(/(\w)(\w*)/g,
-                function (g0, g1, g2) { return g1.toUpperCase() + g2.toLowerCase(); });
+            let chName = channel.name
             setTooltipText('switching to ' + chName);
             return;
         } else {
-            console.log(`No matching command found for "${command}"`);
+            console.error(`No matching command found for "${command}"`, channel);
         }
     }
     setTimeout(setTooltipText, 3000);
@@ -380,7 +373,7 @@ recognition.onnomatch = function () {
 }
 
 recognition.onerror = function (event) {
-    console.log(event.error)
+    console.error(event.error)
     setTooltipText('Error!');
     stopListening("error occured");
 }
@@ -406,6 +399,7 @@ function setChannelCards() {
         if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
             let data = xhr.responseText;
             data = JSON.parse(data);
+            allChannels = data.channels;
             generateChannelCards(data.channels)
         }
     }
