@@ -29,15 +29,15 @@ function adjustDivStyle(selected) {
 }
 function generateChannelCards(channels) {
     const container = document.getElementById('channel-grid');
-    channels.forEach((channel) => {
+    channels.forEach(({ name, ch_num, logoUrl }) => {
         const channelCard = document.createElement('div');
         channelCard.classList.add('channel-card');
-        channelCard.setAttribute('onclick', `switchchannel(${channel.ch_num});`);
+        channelCard.setAttribute('onclick', `switchchannel(${ch_num});`);
 
         const channelImage = document.createElement('img');
         channelImage.classList.add('channel-image');
-        channelImage.setAttribute('src', channel.logoUrl);
-        channelImage.setAttribute('alt', channel.name);
+        channelImage.setAttribute('src', logoUrl);
+        channelImage.setAttribute('alt', name);
 
         channelCard.appendChild(channelImage);
         container.appendChild(channelCard);
@@ -265,7 +265,7 @@ function makeHorizontalTable() {
     hTable.setAttribute("id", "horizontal-table");
     for (i = 0; i < n_of_h; i++) {
         let tr = document.createElement("tr");
-        for (j = 1; j < rows.length - 1; j++) {
+        for (j = 1; j < rows.length; j++) {
             let element = rows[j].getElementsByTagName("td")[i];
             let td = document.createElement("td");
             td.innerHTML = element.innerHTML;
@@ -429,3 +429,11 @@ document.onvisibilitychange = function () {
     }
 }
 
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () {
+        navigator.serviceWorker
+            .register("assets/serviceWorker.js")
+            .then(res => console.log("service worker registered"))
+            .catch(err => console.log("service worker not registered", err))
+    })
+}
