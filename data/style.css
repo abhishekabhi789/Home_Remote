@@ -314,9 +314,8 @@ h2 i,
 .epg table {
   width: 100%;
 }
-
-.table-price th {
-  display: none;
+.epg td {
+  padding: 10px;
 }
 
 #epg {
@@ -332,13 +331,9 @@ h2 i,
   overflow-y: hidden;
 }
 
-
-.epg td {
-  padding: 10px;
-}
-
 #epg-h table td:nth-child(1),
-#epg table tr:nth-child(2) {
+#epg table tr:nth-child(1) {
+  text-transform: capitalize;
   left: 0;
   top: 0;
   z-index: 1;

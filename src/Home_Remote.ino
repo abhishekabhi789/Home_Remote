@@ -64,7 +64,7 @@ void prepareServer()
   server.on("/epg", HTTP_GET, [](AsyncWebServerRequest *request)
             {
     if (EPG != "") {
-      request->send(200, "text/html", EPG);
+      request->send(200, "text/plain", EPG);
     } else {
       request->send(200, "text/plain", "");  //holding the request cause crash
     } });

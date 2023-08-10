@@ -18,7 +18,7 @@ const basicCommands = {
 }
 
 function adjustDivStyle(selected) {
-    let navButtons = document.getElementsByClassName('navigation-buttons')[0]
+    const navButtons = document.getElementsByClassName('navigation-buttons')[0]
     if (selected == "tv") {
         navButtons.style.borderTopLeftRadius = "20px"
         navButtons.style.borderTopRightRadius = "100px"
@@ -28,7 +28,7 @@ function adjustDivStyle(selected) {
     }
 }
 function generateChannelCards(channels) {
-    const container = document.getElementById('channel-grid');
+    const container = getId('channel-grid');
     channels.forEach(({ name, ch_num, logoUrl }) => {
         const channelCard = document.createElement('div');
         channelCard.classList.add('channel-card');
@@ -45,57 +45,56 @@ function generateChannelCards(channels) {
 }
 function currentNavMode() {
     return document.querySelector('input[name="navigation"]:checked');
-
 }
 function changeNav(selected) {
     adjustDivStyle(selected.value)
 }
 function sendNavigation(command) {
-    let device = currentNavMode().value;
+    const device = currentNavMode().value;
     (device == 'tv') ? sendTVCode(command) : sendDthCode(command);
 }
 const host = `http://${location.host}`;
 function sendCommand(device, command) {
-    let xhr = new XMLHttpRequest();
+    const xhr = new XMLHttpRequest();
     xhr.open("POST", `${host}/command?device=${device}&command=${command}`, true);
     xhr.send();
 }
 function sendTVCode(code) {
-    let device = 'tv';
+    const device = 'tv';
     sendCommand(device, code);
 }
 function sendDthCode(code) {
     stopScan();
-    let device = 'dth';
+    const device = 'dth';
     sendCommand(device, code);
 }
 function sendDthCustomCommand(key, value) {
-    let device = 'dth';
-    let xhr = new XMLHttpRequest();
+    const device = 'dth';
+    const xhr = new XMLHttpRequest();
     xhr.open("POST", `${host}/command?device=${device}&${key}=${value}`, true);
     xhr.send();
 }
 function switchchannel(channel) {
     stopScan();
-    let ch_num = channel.toString();
+    const ch_num = channel.toString();
     sendDthCustomCommand('channel', ch_num);
 }
 function scanChannels(event) {
-    let doscan = (event.checked) ? "true" : "false";
+    const doscan = (event.checked) ? "true" : "false";
     sendDthCustomCommand('scan', doscan);
 }
 function stopScan() {
-    let scanButton = document.getElementById('scan-btn');
+    const scanButton = getId('scan-btn');
     if (scanButton.checked) scanButton.checked = false;
 }
 function getCurrentTheme() {
-    let mediaTheme = (window.matchMedia && window.matchMedia("(prefers-color-scheme:dark)").matches) ? 'dark' : 'light';
-    let manualTheme = document.documentElement.classList.value;
-    let currentTheme = manualTheme === "" ? mediaTheme : manualTheme;
+    const mediaTheme = (window.matchMedia && window.matchMedia("(prefers-color-scheme:dark)").matches) ? 'dark' : 'light';
+    const manualTheme = document.documentElement.classList.value;
+    const currentTheme = manualTheme === "" ? mediaTheme : manualTheme;
     return currentTheme;
 }
 function setTheme(theme) {
-    let button = document.querySelector('.theme-toggle-button');
+    const button = document.querySelector('.theme-toggle-button');
     switch (theme) {
         case 'dark': {
             document.documentElement.classList.remove("light");
@@ -123,8 +122,8 @@ function setTheme(theme) {
 
 function toggleTheme() {
     // source: https://stackoverflow.com/a/68824350
-    let currentChoice = localStorage.getItem("userTheme")
-    let nextTheme = (currentChoice === "light") ? "dark" : (currentChoice === "dark") ? "default" : "light";
+    const currentChoice = localStorage.getItem("userTheme")
+    const nextTheme = (currentChoice === "light") ? "dark" : (currentChoice === "dark") ? "default" : "light";
     setTheme(nextTheme);
 }
 
@@ -138,42 +137,37 @@ function getMinutesFromNow(timeString) {
     totalMinutes -= (now.getHours() * 60 + now.getMinutes());
     return totalMinutes;
 }
-function getRows() {
-    return document.querySelectorAll(".table-price tr");
+function getRows(table) {
+    return table.getElementsByTagName('tr');
 }
 
-function removeUnwantedChannels() {
+function removeUnwantedChannels(epg) {
     const myChannels = allChannels.movieChannels;
-    var rows = getRows();
-    for (i = 2; i < (rows.length); i++) {
-        let channel = rows[i].getElementsByTagName("td")[1];
-        let name = channel.innerText.toUpperCase();
-        let removIt = myChannels.find(item => item.toUpperCase() === name);
-        if (!removIt) {
-            rows[i].parentNode.removeChild(rows[i]);
-        }
-    }
+    const data = JSON.parse(epg);
+    data.filter(item => !myChannels.includes(item.channel.trim()))
+        .forEach(item => data.splice(data.indexOf(item), 1));
+    return data;
 }
-function removeOldItems() {
-    var rows = getRows();
-    for (i = 2; i < (rows.length); i++) {
-        let offset = 2;//hours
-        let time = rows[i].getElementsByTagName("td")[0];
-        //remove style attribute of td[0]
-        time.style = null;
-        let minutesFromNow = getMinutesFromNow(time.innerText)
+
+function hideOldItems(table) {
+    const rows = getRows(table);
+    for (i = 1; i < (rows.length); i++) {
+        const offset = 2;//hours
+        const time = rows[i].getElementsByTagName("td")[0];
+        const minutesFromNow = getMinutesFromNow(time.innerText)
         if (minutesFromNow < -(offset * 60)) {
-            rows[i].className = 'past-show'
+            rows[i].className = 'past-show';
         }
     }
+    return table;
 }
-function sortTable() {
-    var rows, switching, i, x, y, shouldSwitch;
+function sortTable(table) {
+    var switching, i, x, y, shouldSwitch;
+    const rows = getRows(table);
     switching = true;
     while (switching) {
         switching = false;
-        rows = getRows();
-        for (i = 2; i < (rows.length - 2); i++) {
+        for (i = 1; i < (rows.length - 1); i++) {
             shouldSwitch = false;
             x = rows[i].getElementsByTagName("td")[0];
             y = rows[i + 1].getElementsByTagName("td")[0];
@@ -187,10 +181,11 @@ function sortTable() {
             switching = true;
         }
     }
+    return table;
 }
-function highlightActiveShows() {
-    var rows = getRows();
-    for (let i = 2; i < rows.length - 2; i++) {
+function highlightActiveShows(table) {
+    const rows = getRows(table);
+    for (let i = 1; i < rows.length; i++) {
         let showtime = rows[i].getElementsByTagName("td")[0];
         let timetoshow = getMinutesFromNow(showtime.innerText);
         let channel = rows[i].getElementsByTagName("td")[1];
@@ -204,39 +199,53 @@ function highlightActiveShows() {
             channel.parentElement.className = "active-show";
         }
     }
+    return table;
 }
-
+function createTable(data) {
+    const table = document.createElement('table');
+    const headerRow = table.insertRow();
+    Object.keys(data[0]).forEach((it, index) => headerRow.insertCell(index).textContent = it);
+    for (const item of data) {
+        let row = table.insertRow();
+        row.insertCell(0).textContent = item.time;
+        row.insertCell(1).textContent = item.channel;
+        row.insertCell(2).textContent = item.movie;
+    }
+    return table;
+}
 function getEpg() {
-    let epg = document.getElementById("epg");
-    let xhr = new XMLHttpRequest();
+    const xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
         if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
             epg_data = xhr.responseText;
         } else {
             epg_data = "";
         }
-        epg.innerHTML = epg_data;
-        removeUnwantedChannels();
-        removeOldItems();
-        sortTable();
-        highlightActiveShows();
+        if (!epg_data) return;
+        epg_data = removeUnwantedChannels(epg_data);
+        var table = createTable(epg_data);
+        table = hideOldItems(table);
+        table = sortTable(table);
+        table = highlightActiveShows(table);
+        getId('epg').appendChild(table);
+        makeHorizontalTable(table);
     }
     xhr.open('GET', `${host}/epg`, false);
     xhr.send(null);
 }
 
-function formatTime(seconds) {
-    function pad(s) {
-        return (s < 10) ? '0' + s : s;
+function formatTime(time) {
+    function pad(t) {
+        return (t < 10) ? '0' + t : t;
     }
-    var hours = Math.floor(seconds / (60 * 60));
-    var minutes = Math.floor(seconds % (60 * 60) / 60);
-    var seconds = Math.floor(seconds % 60);
+    const hours = Math.floor(time / (60 * 60));
+    const minutes = Math.floor(time % (60 * 60) / 60);
+    const seconds = Math.floor(time % 60);
     return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
 }
 
 function getUpTime() {
-    let xhr = new XMLHttpRequest();
+    const xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
         let uptime = 0;
         if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
@@ -249,23 +258,23 @@ function getUpTime() {
     xhr.send(null);
 }
 function setUpTime() {
-    document.getElementById("uptime").style.visibility = "visible";
+    getId("uptime").style.visibility = "visible";
     setInterval(updateUpTime, 1000);
     function updateUpTime() {
         UpTime++;
         let str_uptime = formatTime(UpTime);
-        document.getElementById("uptime_string").innerText = str_uptime;
+        getId("uptime_string").innerText = str_uptime;
     }
 }
 
-function makeHorizontalTable() {
-    var rows = document.querySelectorAll(".table-price tr");
-    let n_of_h = rows[1].getElementsByTagName("td").length;
-    var hTable = document.createElement("table");
+function makeHorizontalTable(table) {
+    const rows = getRows(table);
+    const n_of_h = rows[1].getElementsByTagName("td").length;
+    const hTable = document.createElement("table");
     hTable.setAttribute("id", "horizontal-table");
     for (i = 0; i < n_of_h; i++) {
         let tr = document.createElement("tr");
-        for (j = 1; j < rows.length; j++) {
+        for (j = 0; j < rows.length; j++) {
             let element = rows[j].getElementsByTagName("td")[i];
             let td = document.createElement("td");
             td.innerHTML = element.innerHTML;
@@ -278,15 +287,15 @@ function makeHorizontalTable() {
         }
         hTable.appendChild(tr);
     }
-    document.getElementById("epg-h").appendChild(hTable);
+    getId("epg-h").appendChild(hTable);
 }
 function switchTable() {
     if (window.innerWidth > window.innerHeight) {
-        document.getElementById("epg-h").style.display = 'block';
-        document.getElementById("epg").style.display = 'none';
+        getId("epg-h").style.display = 'block';
+        getId("epg").style.display = 'none';
     } else {
-        document.getElementById("epg").style.display = 'block';
-        document.getElementById("epg-h").style.display = 'none';
+        getId("epg").style.display = 'block';
+        getId("epg-h").style.display = 'none';
     }
     scrollToActiveShow()
 }
@@ -294,7 +303,7 @@ function scrollToActiveShow() {
     if ($('#epg').is(':visible')) {
         let container = $('#epg');
         let activeShowRow = $('#epg .active-show:first');
-        let offset = container.find('tr:nth-child(2)').height();
+        let offset = container.find('tr:nth-child(1)').height();
         container.scrollTop(activeShowRow.position().top - offset);
     } else {
         let container = $('#epg-h');
@@ -385,7 +394,7 @@ function stopListening(reason) {
     micButton.classList.remove('recording');
 }
 function setChannelCards() {
-    let xhr = new XMLHttpRequest();
+    const xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
         if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
             let data = xhr.responseText;
@@ -400,7 +409,7 @@ function setChannelCards() {
 
 function loadSettings() {
     //prepare theme
-    let preferedTheme = localStorage.getItem("userTheme")
+    const preferedTheme = localStorage.getItem("userTheme")
     setTheme(preferedTheme)
 }
 
@@ -419,7 +428,6 @@ loadSettings();
 
 window.onload = function () {
     getEpg();
-    makeHorizontalTable();
     switchTable();
     prepareToListen();
 }

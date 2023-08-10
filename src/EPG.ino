@@ -1,5 +1,85 @@
 #include <HTTPClient.h>
-#include <regex>
+#include <string>
+#include <vector>
+
+std::vector<std::string> rowToValues(const std::string &row)
+{
+  std::vector<std::string> matches;
+  size_t startPos = 0;
+  size_t endPos;
+  while ((endPos = row.find("</td>", startPos)) != std::string::npos)
+  {
+    size_t contentStart = row.find(">", startPos) + 1;
+    if (contentStart != std::string::npos)
+    {
+      std::string rowData = row.substr(contentStart, endPos - contentStart);
+      matches.push_back(rowData);
+    }
+    startPos = endPos + 5;
+  }
+
+  return matches;
+}
+
+std::vector<std::string> splitString(const std::string &input, const std::string &delimiter)
+{
+  std::vector<std::string> result;
+  size_t startPos = 0;
+  size_t endPos;
+  while ((endPos = input.find(delimiter, startPos)) != std::string::npos)
+  {
+    result.push_back(input.substr(startPos, endPos - startPos));
+    startPos = endPos + delimiter.length();
+  }
+  result.push_back(input.substr(startPos));
+  return result;
+}
+
+struct RowObject
+{
+  std::string time;
+  std::string channel;
+  std::string movie;
+};
+
+std::vector<RowObject> tableToJson(const std::string &table)
+{
+  std::vector<std::string> rows = splitString(table, "<tr>");
+  std::vector<RowObject> json;
+  for (size_t i = 3; i < rows.size() - 1; i++)
+  {
+    std::vector<std::string> values = rowToValues(rows[i]);
+    RowObject rowObject;
+    if (values.size() > 0)
+      rowObject.time = values[0];
+    if (values.size() > 1)
+      rowObject.channel = values[1];
+    if (values.size() > 2)
+      rowObject.movie = values[2];
+    json.push_back(rowObject);
+  }
+  return json;
+}
+String getEpgJson(const String &table)
+{
+  std::string tableStr = table.c_str();
+  std::vector<RowObject> json = tableToJson(tableStr);
+  String jsonString = "[\n";
+  for (const auto &obj : json)
+  {
+    jsonString += "  {\n";
+    jsonString += "    \"time\": \"" + String(obj.time.c_str()) + "\",\n";
+    jsonString += "    \"channel\": \"" + String(obj.channel.c_str()) + "\",\n";
+    jsonString += "    \"movie\": \"" + String(obj.movie.c_str()) + "\"\n";
+    jsonString += "  },\n";
+  }
+  if (!json.empty())
+  {
+    jsonString.remove(jsonString.length() - 2); // Remove the last comma and newline
+  }
+  jsonString += "\n]";
+  return jsonString;
+}
 
 String extractTableData(String htmlData)
 {
@@ -8,7 +88,7 @@ String extractTableData(String htmlData)
   if (tableStart != -1 && tableEnd != -1)
   {
     String tableData = htmlData.substring(tableStart, tableEnd + 8); // +8 to include the closing tag
-    return tableData;
+    return getEpgJson(tableData);
   }
   else
   {
@@ -59,8 +139,8 @@ String getHtmlData()
 
   try
   {
-    http.setTimeout(30000);                                                               // 30 Seconds
-    http.begin("https://dailypricelist.com/malayalam-tv-movies-list-today.php", root_ca); // get fingerprint, saw a screenshot contains what to copy.
+    http.setTimeout(30000); // 30 Seconds
+    http.begin("https://dailypricelist.com/malayalam-tv-movies-list-today.php", root_ca);
     int httpCode = http.GET();
 
     if (httpCode > 0)
@@ -77,12 +157,12 @@ String getHtmlData()
   {
     Serial.print("Caught exception: ");
     Serial.println(e.what());
-    source = ""; // Set the source to an empty string or some default value indicating failure.
+    source = "";
   }
   catch (...)
   {
     Serial.println("Caught unknown exception.");
-    source = ""; // Set the source to an empty string or some default value indicating failure.
+    source = "";
   }
   return source;
 }
@@ -93,8 +173,10 @@ String getEpgData()
   String html_data = getHtmlData();
   if (html_data == "")
   {
+    Serial.println("Request failed");
     return html_data;
   }
+  Serial.println("Request success");
   String table = extractTableData(html_data);
   Serial.println("table extracted");
   return table;
