@@ -6,11 +6,11 @@ Personal Project
 
 ## Setup 
 ##### Sample `../Home_Remote/src/config.h` file
-```
-const char *SSID = "my_WiFi_SSID";
-const char *PASSWORD = "my_wifi_Password123";
-const char *OTA_USERNAME = "MyOtaUserName";
-const char *OTA_PASSWORD = "myOtA_passw0rd456";
+```c
+const char *SSID = "";
+const char *PASSWORD = "";
+const char *OTA_USERNAME = "";
+const char *OTA_PASSWORD = "";
 ```
 #### sample `../Home_Remote/data/channeldata` file
 
@@ -38,7 +38,7 @@ An [Android App](AndroidApp/app/debug/app-debug.apk) is included which works onl
 
 ## Resources Used:
 - [dailypricelist.com- EPG Movies](https://dailypricelist.com/malayalam-tv-movies-list-today.php)
-- [wikimedia.org- Malayalam_channel_logos](https://commons.wikimedia.org/wiki/Category:Malayalam_channel_logos)
+- [~~wikimedia.org- Television_logos~~](https://commons.wikimedia.org/wiki/Category:Television_logos)
 
 
 ## References:

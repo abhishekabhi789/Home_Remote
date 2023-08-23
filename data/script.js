@@ -141,18 +141,18 @@ function getRows(table) {
     return table.getElementsByTagName('tr');
 }
 
-function removeUnwantedChannels(epg) {
+function removeUnwantedChannels(data) {
     const myChannels = allChannels.movieChannels;
-    const data = JSON.parse(epg);
     data.filter(item => !myChannels.includes(item.channel.trim()))
         .forEach(item => data.splice(data.indexOf(item), 1));
+    if (data.length === 0) console.error("No shows from selected channels");
     return data;
 }
 
 function hideOldItems(table) {
     const rows = getRows(table);
     for (i = 1; i < (rows.length); i++) {
-        const offset = 2;//hours
+        const offset = 2.5;//hours
         const time = rows[i].getElementsByTagName("td")[0];
         const minutesFromNow = getMinutesFromNow(time.innerText)
         if (minutesFromNow < -(offset * 60)) {
@@ -222,6 +222,7 @@ function getEpg() {
             epg_data = "";
         }
         if (!epg_data) return;
+        if (typeof (epg_data) == 'string') epg_data = JSON.parse(epg_data);
         epg_data = removeUnwantedChannels(epg_data);
         var table = createTable(epg_data);
         table = hideOldItems(table);
@@ -297,20 +298,19 @@ function switchTable() {
         getId("epg").style.display = 'block';
         getId("epg-h").style.display = 'none';
     }
-    scrollToActiveShow()
+    scrollToActiveShow();
 }
 function scrollToActiveShow() {
     if ($('#epg').is(':visible')) {
         let container = $('#epg');
-        let activeShowRow = $('#epg .active-show:first');
-        let offset = container.find('tr:nth-child(1)').height();
-        container.scrollTop(activeShowRow.position().top - offset);
+        let lastActiveShow = container.find('.past-show:last');
+        let headHeight = $('#epg td')[0].offsetHeight;
+        container.scrollTop(lastActiveShow[0].nextElementSibling.offsetTop - headHeight)
     } else {
         let container = $('#epg-h');
-        let activeShowRow = $('#epg-h .active-show:first');
-        let offset = container.find('td:nth-child(1)').width();
-        let tdPadding = parseInt($('td').css('padding'));
-        container.scrollLeft(activeShowRow.position().left - offset - (2 * tdPadding));
+        let lastActiveShow = container.find('.past-show:last');
+        let headWidth = $('#epg-h td')[0].offsetWidth;
+        container.scrollLeft(lastActiveShow[0].nextElementSibling.offsetLeft - headWidth);
     }
 }
 async function delay(ms) {
@@ -430,6 +430,12 @@ window.onload = function () {
     getEpg();
     switchTable();
     prepareToListen();
+    const clickableElements = document.querySelectorAll('button, .scan-button label, .channel-card, .active-show');
+    clickableElements.forEach((element) => {
+        element.addEventListener('click', () => {
+            navigator.vibrate(50);
+        });
+    });
 }
 document.onvisibilitychange = function () {
     if (!document.hidden) {

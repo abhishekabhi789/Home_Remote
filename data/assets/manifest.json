@@ -1,6 +1,7 @@
 {
     "name": "Home Remote",
     "short_name": "Remote",
+    "description": "No more remote reaching!",
     "id": "/remote",
     "start_url": "/remote",
     "display": "standalone",

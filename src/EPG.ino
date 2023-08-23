@@ -92,7 +92,7 @@ String extractTableData(String htmlData)
   }
   else
   {
-    return "error";
+    return "";
   }
 }
 
