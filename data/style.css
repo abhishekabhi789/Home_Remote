@@ -180,18 +180,6 @@ button {
   flex: 1;
 }
 
-@media (orientation: landscape) {
-  .controls {
-    flex-direction: row;
-  }
-}
-
-@media (orientation: portrait) {
-  .controls {
-    flex-direction: column;
-  }
-}
-
 button i,
 h2 i,
 .scan-button label i,
@@ -387,4 +375,18 @@ button:active,
 .channel-card:active,
 .active-show:active {
   transform: scale(0.9);
+}
+@media (orientation: landscape) {
+  .controls {
+    flex-direction: row;
+  }
+  .navigation-buttons {
+    margin: 40px auto;
+  }
+}
+
+@media (orientation: portrait) {
+  .controls {
+    flex-direction: column;
+  }
 }

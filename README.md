@@ -18,12 +18,12 @@ const char *OTA_PASSWORD = "";
 {
   "channels": [
     {
-      "ch_num": 123, //stb channel number
+      "ch_num": 123,
       "name": "Channel Name",
       "logoUrl": "https://example.com/channel_logo.png"
     }
    ],
-  "movieChannels":[] //Channel name filter for epg
+  "movieChannels":["Channel Name"]
 }
 ```
 
