@@ -22,12 +22,22 @@ const char *OTA_PASSWORD = "";
       "name": "Channel Name",
       "logoUrl": "https://example.com/channel_logo.png"
     }
-   ],
+   ]
   "movieChannels":["Channel Name"]
 }
 ```
+#### epg data structure
+```json
+[
+  {
+    "time": "9:30 AM",
+    "channel": "Channel Name",
+    "movie": "Show Name"
+  }
+]
+  ```
 
-An [Android App](AndroidApp/app/debug/app-debug.apk) is included which works only with `http://{ipaddress}/remote` urls.
+An [Android App](https://raw.githubusercontent.com/abhishekabhi789/Home_Remote/main/AndroidApp/app/debug/app-debug.apk) is included which works only with `http://{ipaddress}/remote` urls.
 
 
 

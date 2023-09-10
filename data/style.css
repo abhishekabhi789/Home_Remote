@@ -302,6 +302,7 @@ h2 i,
 .epg table {
   width: 100%;
 }
+
 .epg td {
   padding: 10px;
 }
@@ -376,10 +377,12 @@ button:active,
 .active-show:active {
   transform: scale(0.9);
 }
+
 @media (orientation: landscape) {
   .controls {
     flex-direction: row;
   }
+
   .navigation-buttons {
     margin: 40px auto;
   }

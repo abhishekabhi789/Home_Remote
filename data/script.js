@@ -38,6 +38,7 @@ function generateChannelCards(channels) {
         channelImage.classList.add('channel-image');
         channelImage.setAttribute('src', logoUrl);
         channelImage.setAttribute('alt', name);
+        channelImage.setAttribute('title', name);
 
         channelCard.appendChild(channelImage);
         container.appendChild(channelCard);
@@ -242,7 +243,7 @@ function formatTime(time) {
     const hours = Math.floor(time / (60 * 60));
     const minutes = Math.floor(time % (60 * 60) / 60);
     const seconds = Math.floor(time % 60);
-    return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+    return ` ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
 }
 
 function getUpTime() {
@@ -290,6 +291,7 @@ function makeHorizontalTable(table) {
     }
     getId("epg-h").appendChild(hTable);
 }
+
 function switchTable() {
     if (window.innerWidth > window.innerHeight) {
         getId("epg-h").style.display = 'block';
@@ -300,6 +302,7 @@ function switchTable() {
     }
     scrollToActiveShow();
 }
+
 function scrollToActiveShow() {
     if ($('#epg').is(':visible')) {
         let container = $('#epg');
@@ -313,6 +316,7 @@ function scrollToActiveShow() {
         container.scrollLeft(lastActiveShow[0].nextElementSibling.offsetLeft - headWidth);
     }
 }
+
 async function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -326,6 +330,7 @@ async function setTooltipText(text) {
     await delay(2000);
     tooltipText.innerText = '';
 }
+
 function processVoiceCommand(command) {
     console.log("Processing : " + command);
     if (basicCommands.hasOwnProperty(command)) {
@@ -347,6 +352,7 @@ function processVoiceCommand(command) {
     }
     setTimeout(setTooltipText, 3000);
 }
+
 function prepareToListen() {
     recognition.continuous = false;
     recognition.lang = 'en-US';
@@ -377,6 +383,7 @@ recognition.onerror = function (event) {
     setTooltipText('Error!');
     stopListening("error occured");
 }
+
 micButton.onclick = function () {
     recognition.abort();
     micButton.classList.toggle('recording');
@@ -389,10 +396,12 @@ micButton.onclick = function () {
     setTimeout(function () { recognition.start(); }, 500);
     console.log('Ready to receive a command.');
 }
+
 function stopListening(reason) {
     console.log("stopping listning: " + reason);
     micButton.classList.remove('recording');
 }
+
 function setChannelCards() {
     const xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
@@ -437,6 +446,7 @@ window.onload = function () {
         });
     });
 }
+
 document.onvisibilitychange = function () {
     if (!document.hidden) {
         this.location.reload();
