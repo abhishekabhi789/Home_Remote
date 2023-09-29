@@ -63,11 +63,10 @@ void prepareServer()
     request->send(SPIFFS, "/remote.html"); });
   server.on("/epg", HTTP_GET, [](AsyncWebServerRequest *request)
             {
-    if (EPG != "") {
-      request->send(200, "text/plain", EPG);
-    } else {
-      request->send(200, "text/plain", "");  //holding the request cause crash
-    } });
+      AsyncWebServerResponse *response = request->beginResponse(200, "application/json", EPG);
+      response->addHeader("Cache-Control", "max-age=" + getEpgMaxAge());
+      request->send(response);
+     });
   server.on("/uptime", HTTP_GET, [](AsyncWebServerRequest *request)
             {
       int uptime = millis() - boot_time;

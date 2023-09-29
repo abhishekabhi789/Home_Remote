@@ -1,6 +1,6 @@
-var UpTime = 0;
 let tooltipTimeout = null;
 var allChannels = [];
+const host = `http://${location.host}`;
 
 function getId(item) {
     return document.getElementById(item);
@@ -54,7 +54,6 @@ function sendNavigation(command) {
     const device = currentNavMode().value;
     (device == 'tv') ? sendTVCode(command) : sendDthCode(command);
 }
-const host = `http://${location.host}`;
 function sendCommand(device, command) {
     const xhr = new XMLHttpRequest();
     xhr.open("POST", `${host}/command?device=${device}&command=${command}`, true);
@@ -214,27 +213,30 @@ function createTable(data) {
     }
     return table;
 }
-function getEpg() {
-    const xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
-            epg_data = xhr.responseText;
-        } else {
-            epg_data = "";
+async function getEpg() {
+    try {
+        const response = await fetch(`${host}/epg`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        if (!epg_data) return;
-        if (typeof (epg_data) == 'string') epg_data = JSON.parse(epg_data);
+        let epg_data = await response.json();
+        if (!epg_data) {
+            return;
+        }
         epg_data = removeUnwantedChannels(epg_data);
-        var table = createTable(epg_data);
+        let table = createTable(epg_data);
         table = hideOldItems(table);
         table = sortTable(table);
         table = highlightActiveShows(table);
-        getId('epg').appendChild(table);
+        const epgElement = getId('epg');
+        epgElement.appendChild(table);
         makeHorizontalTable(table);
+        switchTable();
+    } catch (error) {
+        console.error('Error:', error);
     }
-    xhr.open('GET', `${host}/epg`, false);
-    xhr.send(null);
 }
+
 
 function formatTime(time) {
     function pad(t) {
@@ -247,24 +249,28 @@ function formatTime(time) {
 }
 
 function getUpTime() {
-    const xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function () {
-        let uptime = 0;
-        if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
-            uptime = xhr.responseText;
-            UpTime = Math.ceil(parseInt(uptime) / 1000);
-            setUpTime();
-        }
-    }
-    xhr.open('GET', `${host}/uptime`, false);
-    xhr.send(null);
+    fetch(`${host}/uptime`)
+        .then(response => {
+            if (response.ok) {
+                return response.text();
+            } else {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+        })
+        .then(uptime => {
+            uptime = Math.ceil(parseInt(uptime) / 1000);
+            setUpTime(uptime);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
 }
-function setUpTime() {
+function setUpTime(uptime) {
     getId("uptime").style.visibility = "visible";
     setInterval(updateUpTime, 1000);
     function updateUpTime() {
-        UpTime++;
-        let str_uptime = formatTime(UpTime);
+        uptime++;
+        let str_uptime = formatTime(uptime);
         getId("uptime_string").innerText = str_uptime;
     }
 }
@@ -402,62 +408,102 @@ function stopListening(reason) {
     micButton.classList.remove('recording');
 }
 
-function setChannelCards() {
-    const xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
-            let data = xhr.responseText;
-            data = JSON.parse(data);
-            allChannels = data;
-            generateChannelCards(data.channels)
+async function getChannels() {
+    try {
+        const response = await fetch(`${host}/channeldata`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
         }
+        allChannels = await response.json();
+    } catch (error) {
+        console.error('Error:', error);
     }
-    xhr.open('GET', `${host}/channeldata`, false);
-    xhr.send(null);
 }
 
-function loadSettings() {
+function showOffline(isOffline) {
+    const controls = getId('controls');
+    const channelGrid = getId('channel-grid');
+    const epgTable = document.querySelector(".epg");
+    if (isOffline) {
+        console.error("offline");
+        controls.style.display = 'none';
+        channelGrid.style.display = 'none';
+        epgTable.style.maxHeight = '95vh';
+        epgTable.style.maxWidth = '95vw';
+    } else {
+        controls.style.display = 'flex';
+        channelGrid.style.display = 'grid';
+        epgTable.style.maxHeight = '';
+        epgTable.style.maxHeight = '';
+    }
+}
+async function fetchData() {
+    try {
+        await getChannels();
+        getEpg();
+        const available = await fetch(host);
+        console.info("server reachable: " + available.ok);
+        if (available.ok) {
+            getUpTime();
+            generateChannelCards(allChannels.channels);
+            showOffline(false);
+        } else {
+            console.error('server down');
+            showOffline(true);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showOffline(true);
+    }
+}
+
+
+function init() {
     //prepare theme
     const preferedTheme = localStorage.getItem("userTheme")
     setTheme(preferedTheme)
 }
 
-$(document).on('click touchstart', function (e) {
-    if (!$(e.target).closest('.epg').length != 0) {
-        scrollToActiveShow();
+$(document).on('click touchstart', (e) => {
+    if (document.querySelector(".epg").style.display != 'none') {
+        if (!$(e.target).closest('.epg').length != 0) {
+            scrollToActiveShow();
+        }
     }
 });
 
-window.addEventListener('resize', function () {
+window.addEventListener('resize', () => {
     switchTable();
 });
-getUpTime();
-setChannelCards();
-loadSettings();
-
-window.onload = function () {
-    getEpg();
-    switchTable();
-    prepareToListen();
+["online", "offline"].forEach(e => {
+    window.addEventListener(e, () => showOffline(e === "offline"));
+});
+window.onload = () => {
+    init();
+    fetchData();
+}
+window.addEventListener("DOMContentLoaded", () => {
     const clickableElements = document.querySelectorAll('button, .scan-button label, .channel-card, .active-show');
     clickableElements.forEach((element) => {
         element.addEventListener('click', () => {
             navigator.vibrate(50);
         });
     });
-}
+    prepareToListen();
+})
 
-document.onvisibilitychange = function () {
+document.onvisibilitychange = () => {
     if (!document.hidden) {
         this.location.reload();
     }
 }
 
-if ("serviceWorker" in navigator) {
-    window.addEventListener("load", function () {
-        navigator.serviceWorker
-            .register("assets/serviceWorker.js")
-            .then(res => console.log("service worker registered"))
-            .catch(err => console.log("service worker not registered", err))
-    })
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('serviceWorker.js',)
+        .then(registration => {
+            console.log('Service Worker registered with scope:', registration.scope);
+        })
+        .catch(error => {
+            console.error('Service Worker registration failed:', error);
+        });
 }
