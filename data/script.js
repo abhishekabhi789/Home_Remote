@@ -29,14 +29,14 @@ function adjustDivStyle(selected) {
 }
 function generateChannelCards(channels) {
     const container = getId('channel-grid');
-    channels.forEach(({ name, ch_num, logoUrl }) => {
+    channels.forEach(({ name, ch_num, logo_url }) => {
         const channelCard = document.createElement('div');
         channelCard.classList.add('channel-card');
         channelCard.setAttribute('onclick', `switchchannel(${ch_num});`);
 
         const channelImage = document.createElement('img');
         channelImage.classList.add('channel-image');
-        channelImage.setAttribute('src', logoUrl);
+        channelImage.setAttribute('src', logo_url);
         channelImage.setAttribute('alt', name);
         channelImage.setAttribute('title', name);
 
@@ -142,7 +142,7 @@ function getRows(table) {
 }
 
 function removeUnwantedChannels(data) {
-    const myChannels = allChannels.movieChannels;
+    const myChannels = allChannels.movie_channels;
     data.filter(item => !myChannels.includes(item.channel.trim()))
         .forEach(item => data.splice(data.indexOf(item), 1));
     if (data.length === 0) console.error("No shows from selected channels");
@@ -258,21 +258,20 @@ function getUpTime() {
             }
         })
         .then(uptime => {
-            uptime = Math.ceil(parseInt(uptime) / 1000);
-            setUpTime(uptime);
+            setUpTime(Math.ceil(parseInt(uptime)));
         })
         .catch(error => {
             console.error('Error:', error);
         });
 }
-function setUpTime(uptime) {
+function setUpTime(upTime) {
     getId("uptime").style.visibility = "visible";
-    setInterval(updateUpTime, 1000);
     function updateUpTime() {
-        uptime++;
-        let str_uptime = formatTime(uptime);
+        upTime++;
+        let str_uptime = formatTime(upTime);
         getId("uptime_string").innerText = str_uptime;
     }
+    setInterval(updateUpTime, 1000);
 }
 
 function makeHorizontalTable(table) {
@@ -492,11 +491,6 @@ window.addEventListener("DOMContentLoaded", () => {
     prepareToListen();
 })
 
-document.onvisibilitychange = () => {
-    if (!document.hidden) {
-        this.location.reload();
-    }
-}
 
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('serviceWorker.js',)

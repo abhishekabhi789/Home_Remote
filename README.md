@@ -20,10 +20,10 @@ const char *OTA_PASSWORD = "";
     {
       "ch_num": 123,
       "name": "Channel Name",
-      "logoUrl": "https://example.com/channel_logo.png"
+      "logo_url": "https://example.com/channel_logo.png"
     }
    ]
-  "movieChannels":["Channel Name"]
+  "movie_channels":["Channel Name"]
 }
 ```
 #### epg data structure

@@ -63,14 +63,17 @@ void prepareServer()
     request->send(SPIFFS, "/remote.html"); });
   server.on("/epg", HTTP_GET, [](AsyncWebServerRequest *request)
             {
-      AsyncWebServerResponse *response = request->beginResponse(200, "application/json", EPG);
-      response->addHeader("Cache-Control", "max-age=" + getEpgMaxAge());
-      request->send(response);
-     });
+    if (EPG.length() > 0) {
+        AsyncWebServerResponse *response = request->beginResponse(200, "application/json", EPG);
+        request->send(response);
+    } else {
+        request->send(202);
+    } });
+
   server.on("/uptime", HTTP_GET, [](AsyncWebServerRequest *request)
             {
-      int uptime = millis() - boot_time;
-      request->send(200, "text/plain", String(uptime)); });
+      float uptime = (millis() - boot_time)/1000;
+      request->send(200, "text/plain", String(int(uptime))); });
   server.on("/command", HTTP_POST, [](AsyncWebServerRequest *request)
             {
     String command, channel, device, r_msg, doscan;
