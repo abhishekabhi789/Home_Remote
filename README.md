@@ -37,7 +37,7 @@ const char *OTA_PASSWORD = "";
 ]
   ```
 
-An [Android App](https://raw.githubusercontent.com/abhishekabhi789/Home_Remote/main/AndroidApp/app/debug/app-debug.apk) is included which works only with `http://{ipaddress}/remote` urls.
+Add host address on [flags/#unsafely-treat-insecure-origin-as-secure](chrome://flags/#unsafely-treat-insecure-origin-as-secure) to install as pwa and use voice commands.
 
 
 

@@ -76,9 +76,9 @@ self.addEventListener('fetch', evt => {
                 console.debug(`contentLength: ${contentLength} | cachedDate: ${cachedDate} === currentDate: ${currentDate}`);
                 let cacheIsValid = contentLength && cachedDate === currentDate;
                 if (cacheIsValid) {
-                    console.log('Using cached epg');
                     return cacheRes;
                 } else {
+                    console.warn("cached epg is invalid", "date: ", cachedDate);
                     return fetchAndCachedEpg(evt);
                 }
             })
@@ -108,7 +108,6 @@ async function fetchAndCachedEpg(evt) {
             caches.open(staticCacheName).then(cache => {
                 cache.put(evt.request, responseWithCustomHeaders);
             });
-            console.log('using new epg');
             return clonedResponse;
         } else {
             console.info("EPG: ", fetchRes.status, fetchRes.statusText);

@@ -367,7 +367,7 @@ function prepareToListen() {
 
 recognition.onresult = function (event) {
     var command = event.results[0][0].transcript.toUpperCase();
-    console.log(event)
+    console.dir(event);
     console.log(command + " " + event.results[0][0].confidence);
     setTooltipText(command);
     processVoiceCommand(command);
