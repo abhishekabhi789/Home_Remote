@@ -11,6 +11,7 @@ const char *SSID = "";
 const char *PASSWORD = "";
 const char *OTA_USERNAME = "";
 const char *OTA_PASSWORD = "";
+const char *MDNS_HOSTNAME = "homeremote";//http://homeremote.local/
 ```
 #### sample `../Home_Remote/data/channeldata` file
 
@@ -37,8 +38,7 @@ const char *OTA_PASSWORD = "";
 ]
   ```
 
-Add host address on [flags/#unsafely-treat-insecure-origin-as-secure](chrome://flags/#unsafely-treat-insecure-origin-as-secure) to install as pwa and use voice commands.
-
+Host address should be whitelisted on `chrome://flags/#unsafely-treat-insecure-origin-as-secure` to install as PWA and use voice commands.
 
 
 ## Libraries Used:

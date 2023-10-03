@@ -4,6 +4,7 @@
 #include <ESPAsyncWebServer.h>
 #include <AsyncElegantOTA.h>
 #include <SPIFFS.h>
+#include <ESPmDNS.h>
 #include "config.h" //to import ssid & password
 
 // Configurations
@@ -47,6 +48,11 @@ void prepareSetup()
   if (WiFi.waitForConnectResult() != WL_CONNECTED)
   {
     Serial.printf("WiFi Failed!\n");
+    return;
+  }
+  if (!MDNS.begin(MDNS_HOSTNAME))
+  {
+    Serial.println("Error starting mDNS");
     return;
   }
   Serial.print("IP Address: ");
