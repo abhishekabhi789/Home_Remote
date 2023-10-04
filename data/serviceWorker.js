@@ -28,7 +28,7 @@ self.addEventListener('install', (event) => {
                 console.log('Installation in progress, caching shell assets...');
                 return Promise.all(
                     assets.map((asset) => {
-                        console.log("caching " + asset);
+                        console.debug("caching " + asset);
                         if (asset == '/epg') {
                             return fetchAndCachedEpg(asset);
                         } else {
@@ -73,12 +73,13 @@ self.addEventListener('fetch', evt => {
                 const contentLength = (cacheRes && cacheRes.headers.has('content-length')) ? cacheRes.headers.get('content-length') > 0 : false;
                 const cachedDate = (cacheRes && cacheRes.headers.has("date")) ? cacheRes.headers.get('date') : null;
                 const currentDate = formatDate(new Date());
-                console.debug(`contentLength: ${contentLength} | cachedDate: ${cachedDate} === currentDate: ${currentDate}`);
+                console.debug(`contentLength: ${contentLength} | cachedDate: ${cachedDate} | currentDate: ${currentDate}`);
                 let cacheIsValid = contentLength && cachedDate === currentDate;
                 if (cacheIsValid) {
+                    console.debug("cached epg is valid");
                     return cacheRes;
                 } else {
-                    console.warn("cached epg is invalid", "date: ", cachedDate);
+                    console.warn("cached epg is invalid", "| date: ", cachedDate);
                     return fetchAndCachedEpg(evt);
                 }
             })
@@ -96,7 +97,7 @@ async function fetchAndCachedEpg(evt) {
     return fetch(evt.request).then(fetchRes => {
         const clonedResponse = fetchRes.clone();
         if (fetchRes.status === 200 && fetchRes.type === 'basic') {
-            console.log('caching new epg');
+            console.debug('caching new epg');
             const customHeaders = new Headers(fetchRes.headers);
             customHeaders.set('cache-control', `max-age:${getEpgMaxAge()}`);
             customHeaders.set('date', formatDate(new Date()));
@@ -110,7 +111,7 @@ async function fetchAndCachedEpg(evt) {
             });
             return clonedResponse;
         } else {
-            console.info("EPG: ", fetchRes.status, fetchRes.statusText);
+            console.warn("EPG not available ", fetchRes.status, fetchRes.statusText);
             return new Response(null);
         }
     }).catch(error => {

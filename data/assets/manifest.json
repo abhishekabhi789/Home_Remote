@@ -5,8 +5,8 @@
     "id": "/remote",
     "start_url": "/remote",
     "display": "standalone",
-    "background_color": "#fdfdfd",
-    "theme_color": "#4fbbfd",
+    "background_color": "#FDFDFD",
+    "theme_color": "#4FBBFD",
     "icons": [
         {
             "src": "512.png",

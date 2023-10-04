@@ -1,34 +1,30 @@
 #define SEND_PWM_BY_TIMER
 #include <WiFi.h>
+#include <WiFiMulti.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <AsyncElegantOTA.h>
 #include <SPIFFS.h>
 #include <ESPmDNS.h>
-#include "config.h" //to import ssid & password
+#include "config.h" //credentials
 
 // Configurations
 const int TV_ON_DELAY = 5000;
 const int DTH_BOOT_DELAY = 40000;
 const int LED_BLINK_DURATON = 100;
 const int CH_SCAN_INTERVAL = 6000;
-const int WIFI_SCAN_INTERVAL = 5000;
-const char *ssid = SSID;
-const char *password = PASSWORD;
 const int COMMAND_INTERVAL = 350;
 const int SEND_PIN = 3;
 const int DTH_COMMAND_REPEAT = 2;
-
+const uint32_t connectTimeoutMs = 10000;
 // Global variables
-
-unsigned long previous_scan_time = 0;
 unsigned long previous_command_time = 0;
 unsigned long boot_time = 0;
 bool is_booting = false;
 bool is_tv_on = false;
 bool run_scan = false;
 String EPG;
-
+WiFiMulti wifiMulti;
 AsyncWebServer server(80);
 
 void notFound(AsyncWebServerRequest *request)
@@ -43,20 +39,31 @@ void prepareSetup()
     Serial.println("An Error has occurred while mounting SPIFFS");
     return;
   }
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, password);
-  if (WiFi.waitForConnectResult() != WL_CONNECTED)
+ 
+  int numNetworks = sizeof(wiFiNetworks) / sizeof(wiFiNetworks[0]);
+  for (int i = 0; i < numNetworks; i++)
+  {
+    const char *ssid = wiFiNetworks[i].ssid;
+    const char *password = wiFiNetworks[i].password;
+    wifiMulti.addAP(ssid, password);
+  }
+
+  if (wifiMulti.run() != WL_CONNECTED)
   {
     Serial.printf("WiFi Failed!\n");
     return;
   }
+  // Initialize mDNS
   if (!MDNS.begin(MDNS_HOSTNAME))
   {
     Serial.println("Error starting mDNS");
     return;
   }
-  Serial.print("IP Address: ");
-  Serial.println(WiFi.localIP());
+  if (WiFi.status() == WL_CONNECTED)
+  {
+    Serial.print("IP Address: ");
+    Serial.println(WiFi.localIP());
+  }
 }
 void prepareServer()
 {
@@ -158,24 +165,17 @@ void loop()
   }
 
   // Reconnect wifi loop
-  if ((WiFi.status() != WL_CONNECTED) && (currentMillis - previous_scan_time >= WIFI_SCAN_INTERVAL))
+  if ((WiFi.status() != WL_CONNECTED))
   {
-    Serial.print(millis());
     Serial.println(" Reconnecting to WiFi...");
-    WiFi.disconnect();
-    WiFi.reconnect();
-    if (WiFi.waitForConnectResult() != WL_CONNECTED)
-    {
-      Serial.printf("WiFi Failed!\n");
-      previous_scan_time = currentMillis;
-      return;
-    }
+    wifiMulti.run(connectTimeoutMs);
     Serial.println("Re-preparing server");
     prepareServer();
-    if (EPG == "")
+    if (EPG == "" && WiFi.status() == WL_CONNECTED)
     {
       EPG = getEpgData();
     }
+    delay(connectTimeoutMs);
   }
 
   // Scan channel loop

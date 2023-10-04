@@ -1,13 +1,11 @@
 let tooltipTimeout = null;
 var allChannels = [];
-const host = `http://${location.host}`;
 
 function getId(item) {
     return document.getElementById(item);
 }
 const micButton = getId("voiceInput")
 const tooltipText = getId("tooltip-text")
-adjustDivStyle(currentNavMode().value);
 var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
 var SpeechGrammarList = SpeechGrammarList || webkitSpeechGrammarList;
 var SpeechRecognitionEvent = SpeechRecognitionEvent || webkitSpeechRecognitionEvent;
@@ -56,7 +54,7 @@ function sendNavigation(command) {
 }
 function sendCommand(device, command) {
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", `${host}/command?device=${device}&command=${command}`, true);
+    xhr.open("POST", `/command?device=${device}&command=${command}`, true);
     xhr.send();
 }
 function sendTVCode(code) {
@@ -71,7 +69,7 @@ function sendDthCode(code) {
 function sendDthCustomCommand(key, value) {
     const device = 'dth';
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", `${host}/command?device=${device}&${key}=${value}`, true);
+    xhr.open("POST", `/command?device=${device}&${key}=${value}`, true);
     xhr.send();
 }
 function switchchannel(channel) {
@@ -215,7 +213,7 @@ function createTable(data) {
 }
 async function getEpg() {
     try {
-        const response = await fetch(`${host}/epg`);
+        const response = await fetch('/epg');
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -249,7 +247,7 @@ function formatTime(time) {
 }
 
 function getUpTime() {
-    fetch(`${host}/uptime`)
+    fetch('/uptime')
         .then(response => {
             if (response.ok) {
                 return response.text();
@@ -409,7 +407,7 @@ function stopListening(reason) {
 
 async function getChannels() {
     try {
-        const response = await fetch(`${host}/channeldata`);
+        const response = await fetch('/channeldata');
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -436,11 +434,12 @@ function showOffline(isOffline) {
         epgTable.style.maxHeight = '';
     }
 }
+
 async function fetchData() {
     try {
         await getChannels();
         getEpg();
-        const available = await fetch(host);
+        const available = await fetch("/", { mode: 'no-cors' });
         console.info("server reachable: " + available.ok);
         if (available.ok) {
             getUpTime();
@@ -458,6 +457,7 @@ async function fetchData() {
 
 
 function init() {
+    adjustDivStyle(currentNavMode().value);
     //prepare theme
     const preferedTheme = localStorage.getItem("userTheme")
     setTheme(preferedTheme)

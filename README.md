@@ -7,11 +7,19 @@ Personal Project
 ## Setup 
 ##### Sample `../Home_Remote/src/config.h` file
 ```c
-const char *SSID = "";
-const char *PASSWORD = "";
 const char *OTA_USERNAME = "";
 const char *OTA_PASSWORD = "";
-const char *MDNS_HOSTNAME = "homeremote";//http://homeremote.local/
+const char *MDNS_HOSTNAME = "home";//http://home.local/remote
+
+struct WiFiNetwork
+{
+    const char *ssid;
+    const char *password;
+};
+
+WiFiNetwork wiFiNetworks[] = {
+    {"ssid1", "password1"},
+    {"ssid2", "password2"}};
 ```
 #### sample `../Home_Remote/data/channeldata` file
 
