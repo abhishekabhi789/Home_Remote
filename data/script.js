@@ -421,15 +421,18 @@ function showOffline(isOffline) {
     const controls = getId('controls');
     const channelGrid = getId('channel-grid');
     const epgTable = document.querySelector(".epg");
+    const hostAddress = getId('host-address');
     if (isOffline) {
         console.error("offline");
         controls.style.display = 'none';
         channelGrid.style.display = 'none';
+        hostAddress.style.visibility = 'hidden';
         epgTable.style.maxHeight = '95vh';
         epgTable.style.maxWidth = '95vw';
     } else {
         controls.style.display = 'flex';
         channelGrid.style.display = 'grid';
+        hostAddress.style.visibility = 'visible';
         epgTable.style.maxHeight = '';
         epgTable.style.maxHeight = '';
     }
@@ -455,12 +458,34 @@ async function fetchData() {
     }
 }
 
+async function setHostAddress() {
+    try {
+        const response = await fetch("/");
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const address = await response.text();
+        // const address = '192.168.43.134'//debug
+        if (!address) { return }
+        const textField = getId("host-address");
+        const url = `http://${address}/remote`
+        textField.style.visibility = "visible";
+        textField.innerText = url;
+        textField.addEventListener('click', () => {
+            navigator.clipboard.writeText(url);
+            alert("the URL is copied to clipboard.");
+        });
+    } catch (error) {
+        console.error('error fetching host address:', error);
+    }
+}
 
 function init() {
     adjustDivStyle(currentNavMode().value);
     //prepare theme
     const preferedTheme = localStorage.getItem("userTheme")
     setTheme(preferedTheme)
+    setHostAddress();
 }
 
 $(document).on('click touchstart', (e) => {

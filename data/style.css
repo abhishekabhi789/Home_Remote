@@ -65,8 +65,19 @@ body::-webkit-scrollbar,
   position: absolute;
   margin: 10px;
   font-size: 20px;
-  top: 5px;
+  top: 20px;
   left: 10px;
+}
+
+.host-address {
+  visibility: hidden;
+  font-size: small;
+  font-weight: 500;
+  color: #999;
+  font-weight: 400;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .listen-voice-input {
@@ -363,6 +374,7 @@ button,
 }
 
 @media (hover: hover) {
+
   button:hover,
   .scan-button label:hover,
   .channel-card:hover,

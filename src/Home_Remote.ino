@@ -26,6 +26,7 @@ bool is_booting = false;
 bool is_tv_on = false;
 bool run_scan = false;
 String EPG;
+String address;
 WiFiMulti wifiMulti;
 AsyncWebServer server(80);
 
@@ -65,12 +66,13 @@ void prepareSetup()
   {
     Serial.print("IP Address: ");
     Serial.println(WiFi.localIP());
+    address = WiFi.localIP().toString();
   }
 }
 void prepareServer()
 {
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(200, "text/plain", "server running"); });
+            { request->send(200, "text/plain", String(address)); });
   server.serveStatic("/", SPIFFS, "/");
   server.on("/remote", HTTP_GET, [](AsyncWebServerRequest *request)
             {
@@ -175,6 +177,7 @@ void loop()
     prepareServer();
     if (WiFi.status() == WL_CONNECTED)
     {
+      address = WiFi.localIP().toString();
       if (!EPG)
       {
         EPG = getEpgData();
@@ -184,6 +187,7 @@ void loop()
     else
     {
       Serial.println("wifi connection failed.");
+      address = "";
       previous_scan_time = currentMillis;
       return;
     }
