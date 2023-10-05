@@ -19,7 +19,8 @@ struct WiFiNetwork
 
 WiFiNetwork wiFiNetworks[] = {
     {"ssid1", "password1"},
-    {"ssid2", "password2"}};
+    {"ssid2", "password2"}
+};
 ```
 #### sample `../Home_Remote/data/channeldata` file
 

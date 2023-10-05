@@ -16,8 +16,10 @@ const int CH_SCAN_INTERVAL = 6000;
 const int COMMAND_INTERVAL = 350;
 const int SEND_PIN = 3;
 const int DTH_COMMAND_REPEAT = 2;
-const uint32_t connectTimeoutMs = 10000;
+const int WIFI_SCAN_INTERVAL = 30000;
+const int connectTimeoutMs = 10000;
 // Global variables
+unsigned long previous_scan_time = 0;
 unsigned long previous_command_time = 0;
 unsigned long boot_time = 0;
 bool is_booting = false;
@@ -39,7 +41,7 @@ void prepareSetup()
     Serial.println("An Error has occurred while mounting SPIFFS");
     return;
   }
- 
+
   int numNetworks = sizeof(wiFiNetworks) / sizeof(wiFiNetworks[0]);
   for (int i = 0; i < numNetworks; i++)
   {
@@ -165,17 +167,26 @@ void loop()
   }
 
   // Reconnect wifi loop
-  if ((WiFi.status() != WL_CONNECTED))
+  if ((WiFi.status() != WL_CONNECTED) && (currentMillis - previous_scan_time >= WIFI_SCAN_INTERVAL))
   {
     Serial.println(" Reconnecting to WiFi...");
     wifiMulti.run(connectTimeoutMs);
     Serial.println("Re-preparing server");
     prepareServer();
-    if (EPG == "" && WiFi.status() == WL_CONNECTED)
+    if (WiFi.status() == WL_CONNECTED)
     {
-      EPG = getEpgData();
+      if (!EPG)
+      {
+        EPG = getEpgData();
+        return;
+      }
     }
-    delay(connectTimeoutMs);
+    else
+    {
+      Serial.println("wifi connection failed.");
+      previous_scan_time = currentMillis;
+      return;
+    }
   }
 
   // Scan channel loop
@@ -183,5 +194,6 @@ void loop()
   {
     sendDthCommand("ch_up");
     previous_command_time = currentMillis;
+    return;
   }
 }
