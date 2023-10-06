@@ -1,7 +1,6 @@
-#define IR_SEND_PIN 3
 #include <IRremote.h>
-#include "tv_remote.h"
-#include "dth_remote.h"
+#include "remote_tv.h"
+#include "remote_dth.h"
 IRsend irsend;
 
 void makeIr()

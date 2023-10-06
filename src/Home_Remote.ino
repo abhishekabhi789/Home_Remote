@@ -1,9 +1,11 @@
 #define SEND_PWM_BY_TIMER
+#define IR_SEND_PIN 3
+#define RGB_BRIGHTNESS 64
 #include <WiFi.h>
 #include <WiFiMulti.h>
+#include <ArduinoOTA.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
-#include <AsyncElegantOTA.h>
 #include <SPIFFS.h>
 #include <ESPmDNS.h>
 #include "config.h" //credentials
@@ -34,121 +36,21 @@ void notFound(AsyncWebServerRequest *request)
 {
   request->send(404, "text/plain", "Not found");
 }
-void prepareSetup()
-{
-  // Initialize SPIFFS
-  if (!SPIFFS.begin(true))
-  {
-    Serial.println("An Error has occurred while mounting SPIFFS");
-    return;
-  }
 
-  int numNetworks = sizeof(wiFiNetworks) / sizeof(wiFiNetworks[0]);
-  for (int i = 0; i < numNetworks; i++)
-  {
-    const char *ssid = wiFiNetworks[i].ssid;
-    const char *password = wiFiNetworks[i].password;
-    wifiMulti.addAP(ssid, password);
-  }
-
-  if (wifiMulti.run() != WL_CONNECTED)
-  {
-    Serial.printf("WiFi Failed!\n");
-    return;
-  }
-  // Initialize mDNS
-  if (!MDNS.begin(MDNS_HOSTNAME))
-  {
-    Serial.println("Error starting mDNS");
-    return;
-  }
-  if (WiFi.status() == WL_CONNECTED)
-  {
-    Serial.print("IP Address: ");
-    Serial.println(WiFi.localIP());
-    address = WiFi.localIP().toString();
-  }
-}
-void prepareServer()
-{
-  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(200, "text/plain", String(address)); });
-  server.serveStatic("/", SPIFFS, "/");
-  server.on("/remote", HTTP_GET, [](AsyncWebServerRequest *request)
-            {
-    Serial.println("asking for remote");
-    request->send(SPIFFS, "/remote.html"); });
-  server.on("/epg", HTTP_GET, [](AsyncWebServerRequest *request)
-            {
-    if (EPG.length() > 0) {
-        AsyncWebServerResponse *response = request->beginResponse(200, "application/json", EPG);
-        request->send(response);
-    } else {
-        request->send(202);
-    } });
-
-  server.on("/uptime", HTTP_GET, [](AsyncWebServerRequest *request)
-            {
-      float uptime = (millis() - boot_time)/1000;
-      request->send(200, "text/plain", String(int(uptime))); });
-  server.on("/command", HTTP_POST, [](AsyncWebServerRequest *request)
-            {
-    String command, channel, device, r_msg, doscan;
-    int r_code;
-    try {
-      if (!request->hasParam("device")) {
-        throw std::runtime_error("Failed to get device");
-      }
-      device = request->getParam("device")->value();
-      if (device.equalsIgnoreCase("tv")) {
-        if (!request->hasParam("command")) {
-          throw std::runtime_error("Failed to get command");
-        }
-        command = request->getParam("command")->value();
-        sendTvCommand(command);
-      } else if (device.equalsIgnoreCase("dth")) {
-        run_scan = false;  //reset or turnoff autoscan when a dth command is received
-        if (request->hasParam("channel")) {
-          channel = request->getParam("channel")->value();
-          switchChannel(channel);
-        } else if (request->hasParam("command")) {
-          command = request->getParam("command")->value();
-          sendDthCommand(command);
-        } else if (request->hasParam("scan")) {
-          doscan = request->getParam("scan")->value();
-          run_scan = (doscan != "false");
-        } else {
-          throw std::runtime_error("Failed to get command or channel");
-        }
-      } else {
-        throw std::runtime_error("Unknown device");
-      }
-      r_code = 200;
-      r_msg = "ok";
-    } catch (const std::runtime_error& e) {
-      r_code = 400;
-      r_msg = e.what();
-    } catch (...) {
-      r_code = 500;
-      r_msg = "Unknown error occurred";
-    }
-    request->send(r_code, "text/plain", r_msg); });
-  AsyncElegantOTA.begin(&server, OTA_USERNAME, OTA_PASSWORD);
-  server.onNotFound(notFound);
-  server.begin();
-}
 void setup()
 {
   Serial.begin(115200);
   is_booting = true;
   boot_time = millis();
   makeIr(); // prepare ir library
-  prepareSetup();
+  prepareNetwork();
   prepareServer();
+  prepareOTA();
 }
 
 void loop()
 {
+  ArduinoOTA.handle();
   unsigned long currentMillis = millis();
   // not a loop, turn on tv after delay
   if ((is_booting == true) && (is_tv_on == false) && (currentMillis - boot_time > TV_ON_DELAY))

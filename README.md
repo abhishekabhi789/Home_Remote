@@ -7,9 +7,8 @@ Personal Project
 ## Setup 
 ##### Sample `../Home_Remote/src/config.h` file
 ```c
-const char *OTA_USERNAME = "";
-const char *OTA_PASSWORD = "";
 const char *MDNS_HOSTNAME = "home";//http://home.local/remote
+const char *OTA_PASSWORD = "";
 
 struct WiFiNetwork
 {
@@ -53,7 +52,6 @@ Host address should be whitelisted on `chrome://flags/#unsafely-treat-insecure-o
 ## Libraries Used:
 - [Arduino-IRremote](https://github.com/Arduino-IRremote/Arduino-IRremote)
 - [ESPAsyncWebServer](https://github.com/me-no-dev/ESPAsyncWebServer)
-- [AsyncElegantOTA](https://github.com/ayushsharma82/AsyncElegantOTA)
 
 ## Resources Used:
 - [dailypricelist.com- EPG Movies](https://dailypricelist.com/malayalam-tv-movies-list-today.php)
