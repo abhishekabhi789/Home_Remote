@@ -13,6 +13,7 @@ void prepareServer()
         AsyncWebServerResponse *response = request->beginResponse(200, "application/json", EPG);
         request->send(response);
     } else {
+        attemptEpgFetching = true;
         request->send(202);
     } });
 

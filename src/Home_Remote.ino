@@ -20,6 +20,7 @@ const int SEND_PIN = 3;
 const int DTH_COMMAND_REPEAT = 2;
 const int WIFI_SCAN_INTERVAL = 30000;
 const int connectTimeoutMs = 10000;
+
 // Global variables
 unsigned long previous_scan_time = 0;
 unsigned long previous_command_time = 0;
@@ -28,6 +29,7 @@ bool is_booting = false;
 bool is_tv_on = false;
 bool run_scan = false;
 String EPG;
+bool attemptEpgFetching = false;
 String address;
 WiFiMulti wifiMulti;
 AsyncWebServer server(80);
@@ -64,10 +66,7 @@ void loop()
   {
     prepareDth();
     is_booting = false;
-    if (WiFi.status() == WL_CONNECTED)
-    {
-      EPG = getEpgData();
-    }
+    attemptEpgFetching = true;
   }
 
   // Reconnect wifi loop
@@ -80,11 +79,6 @@ void loop()
     if (WiFi.status() == WL_CONNECTED)
     {
       address = WiFi.localIP().toString();
-      if (!EPG)
-      {
-        EPG = getEpgData();
-        return;
-      }
     }
     else
     {
@@ -92,6 +86,16 @@ void loop()
       address = "";
       previous_scan_time = currentMillis;
       return;
+    }
+  }
+  // fetch epg if not obtained
+  if (attemptEpgFetching && EPG == NULL && WiFi.status() == WL_CONNECTED)
+  {
+    blinkLed(1000);
+    EPG = getEpgData();
+    if (EPG)
+    {
+      attemptEpgFetching = false;
     }
   }
 
