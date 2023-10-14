@@ -5,10 +5,12 @@ Personal Project
 - IR Transmit: [TinkerCad- IR_Transmitter](https://www.tinkercad.com/things/cOmIBrUoD2K)
 
 ## Setup 
-##### Sample `../Home_Remote/src/config.h` file
+#### Sample `../Home_Remote/src/config.h` file
 ```c
 const char *MDNS_HOSTNAME = "home";//http://home.local/remote
 const char *OTA_PASSWORD = "";
+const char *WIFI_AP_SSID = "";
+const char *WIFI_AP_PASSWORD = "";
 
 struct WiFiNetwork
 {

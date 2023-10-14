@@ -1,5 +1,7 @@
 void prepareNetwork()
 {
+  WiFi.mode(WIFI_AP_STA);
+  WiFi.softAP(WIFI_AP_SSID, WIFI_AP_PASSWORD);
   // Initialize SPIFFS
   if (!SPIFFS.begin(true))
   {

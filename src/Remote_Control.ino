@@ -3,7 +3,7 @@
 #include "remote_dth.h"
 IRsend irsend;
 
-void makeIr()
+void prepareRemoteControl()
 {
   irsend.begin(SEND_PIN);
 }

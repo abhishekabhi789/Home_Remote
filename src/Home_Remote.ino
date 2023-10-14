@@ -44,7 +44,7 @@ void setup()
   Serial.begin(115200);
   is_booting = true;
   boot_time = millis();
-  makeIr(); // prepare ir library
+  prepareRemoteControl();
   prepareNetwork();
   prepareServer();
   prepareOTA();
@@ -75,9 +75,9 @@ void loop()
     Serial.println(" Reconnecting to WiFi...");
     wifiMulti.run(connectTimeoutMs);
     Serial.println("Re-preparing server");
-    prepareServer();
     if (WiFi.status() == WL_CONNECTED)
-    {
+    { 
+      prepareServer();
       address = WiFi.localIP().toString();
     }
     else
