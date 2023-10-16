@@ -34,11 +34,6 @@ String address;
 WiFiMulti wifiMulti;
 AsyncWebServer server(80);
 
-void notFound(AsyncWebServerRequest *request)
-{
-  request->send(404, "text/plain", "Not found");
-}
-
 void setup()
 {
   Serial.begin(115200);

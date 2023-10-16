@@ -1,30 +1,34 @@
+
+void notFound(AsyncWebServerRequest *request)
+{
+  request->send(404, "text/plain", "Not found");
+}
+
 void prepareServer()
 {
-  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(200, "text/plain", String(address)); });
   server.serveStatic("/", SPIFFS, "/");
-  server.on("/remote", HTTP_GET, [](AsyncWebServerRequest *request)
-            {
-    Serial.println("asking for remote");
-    request->send(SPIFFS, "/remote.html"); });
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SPIFFS, "/remote.html"); });
+  server.on("/ip", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(200, "text/plain", String(address)); });
   server.on("/epg", HTTP_GET, [](AsyncWebServerRequest *request)
             {
-    if (EPG.length() > 0) {
-        AsyncWebServerResponse *response = request->beginResponse(200, "application/json", EPG);
-        request->send(response);
-    } else {
-        attemptEpgFetching = true;
-        request->send(202);
-    } });
+              if (EPG.length() > 0) {
+                AsyncWebServerResponse *response = request->beginResponse(200, "application/json", EPG);
+                request->send(response);
+                } else {
+                  attemptEpgFetching = true;
+                  request->send(202);
+                  } });
 
   server.on("/uptime", HTTP_GET, [](AsyncWebServerRequest *request)
             {
-      float uptime = (millis() - boot_time)/1000;
-      request->send(200, "text/plain", String(int(uptime))); });
+              float uptime = (millis() - boot_time)/1000;
+              request->send(200, "text/plain", String(int(uptime))); });
   server.on("/command", HTTP_POST, [](AsyncWebServerRequest *request)
             {
-    String command, channel, device, r_msg, doscan;
-    int r_code;
+              String command, channel, device, r_msg, doscan;
+              int r_code;
     try {
       if (!request->hasParam("device")) {
         throw std::runtime_error("Failed to get device");

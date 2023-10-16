@@ -1,15 +1,18 @@
-const staticCacheName = "static-assets-v1";
+const staticCacheName = "static-assets-v2";
 const assets = [
-    "/remote",
-    "/channeldata", "/epg",
-    "/remote.html", "/script.js", "/style.css",
+    "/channeldata", "/epg", "/ip",
+    "/remote.html", "/style.css", "/modules/main.js",
+    "/modules/data_processing.js", "/modules/epg_processing.js", "/modules/remote_control.js", "/modules/ui_control.js", "/modules/utils.js", "/modules/voice_control.js",
     "/assets/manifest.json", "/assets/favicon.ico", "/assets/192.png", "/assets/512.png"
 ];
+
 // const assets = [ //for debgugging
-//     "/channeldata", "/epg",
-//     "/data/remote.html", "/data/script.js", "/data/style.css",
+//     "/channeldata", "/epg","/ip",
+//     "/data/remote.html", "/data/style.css", "/data/modules/main.js",
+//     "/data/modules/data_processing.js", "/data/modules/epg_processing.js", "/data/modules/remote_control.js", "/data/modules/ui_control.js", "/data/modules/utils.js", "/data/modules/voice_control.js",
 //     "/data/assets/manifest.json", "/data/assets/favicon.ico", "/data/assets/192.png", "/data/assets/512.png"
 // ];
+
 function formatDate(date) {
     return date.toISOString().split('T')[0];
 }

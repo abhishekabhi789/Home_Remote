@@ -3,7 +3,7 @@
     "short_name": "Remote",
     "description": "No more remote reaching!",
     "id": "/remote",
-    "start_url": "/remote",
+    "start_url": "/",
     "display": "standalone",
     "background_color": "#FDFDFD",
     "theme_color": "#4FBBFD",

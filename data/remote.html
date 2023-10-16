@@ -13,9 +13,9 @@
 </head>
 
 <body>
-	<button class="theme-toggle-button" onclick="toggleTheme()"></button>
 	<div id="host-address" class="host-address"></div>
 	<div id="controls" class="controls">
+		<button class="theme-toggle-button" onclick="toggleTheme()"></button>
 		<div id="uptime" class="uptime"><i class="fa fa-clock-o" id="uptime_string"></i></div>
 		<div class="listen-voice-input"><span id="tooltip-text" class="tooltiptext"></span><button id="voiceInput"><i
 					class="fa fa-microphone"></i></button>
@@ -76,7 +76,9 @@
 	</div>
 	<div id="epg" class="epg"></div>
 	<div id="epg-h" class="epg"></div>
-	<script src="script.js"></script>
+	<script type="module" src="./modules/main.js"></script>
+	<script type="module" src="./modules/remote_control.js"></script>
+
 </body>
 
 </html>
