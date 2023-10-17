@@ -1,12 +1,13 @@
 import { allChannels } from "./data_processing.js";
 import { getId, getMinutesFromNow } from "./utils.js"
+const displayStyle = { NONE: "none", BLOCK: "block" }
 function getRows(table) {
     return table.getElementsByTagName('tr');
 }
 
 function removeUnwantedChannels(data) {
-    const myChannels = allChannels.movie_channels;
-    data.filter(item => !myChannels.includes(item.channel.trim()))
+    const myChannels = allChannels.movie_channels.map((it) => it.toUpperCase());
+    data.filter(item => !myChannels.includes(item.channel.trim().toUpperCase()))
         .forEach(item => data.splice(data.indexOf(item), 1));
     if (data.length === 0) console.error("No shows from selected channels");
     return data;
@@ -125,16 +126,16 @@ function makeHorizontalTable(table) {
 
 export function switchTable() {
     if (window.innerWidth > window.innerHeight) {
-        getId("epg-h").style.display = 'block';
-        getId("epg").style.display = 'none';
+        getId("epg").style.display = displayStyle.NONE;
+        getId("epg-h").style.display = displayStyle.BLOCK;
     } else {
-        getId("epg").style.display = 'block';
-        getId("epg-h").style.display = 'none';
+        getId("epg").style.display = displayStyle.BLOCK;
+        getId("epg-h").style.display = displayStyle.NONE;
     }
     scrollToActiveShow();
 }
 
-function scrollToActiveShow() {
+export function scrollToActiveShow() {
     if ($('#epg').is(':visible')) {
         let container = $('#epg');
         let lastActiveShow = container.find('.past-show:last');
@@ -147,11 +148,3 @@ function scrollToActiveShow() {
         container.scrollLeft(lastActiveShow[0].nextElementSibling.offsetLeft - headWidth);
     }
 }
-
-$(document).on('click touchstart', (e) => {
-    if (document.querySelector(".epg").style.display != 'none') {
-        if (!$(e.target).closest('.epg').length != 0) {
-            scrollToActiveShow();
-        }
-    }
-});

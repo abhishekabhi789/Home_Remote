@@ -1,6 +1,6 @@
 import { getId } from "./utils.js";
 import { getEpg } from "./epg_processing.js";
-import { showOffline,setUpTime } from "./ui_control.js";
+import { showOffline, setUpTime } from "./ui_control.js";
 export var allChannels = [];
 
 function generateChannelCards(channels) {
@@ -54,7 +54,13 @@ export async function fetchData() {
     try {
         await getChannels();
         getEpg();
-        const available = await fetch("/ip", { mode: 'no-cors' });
+        const abortController = new AbortController();
+        const signal = abortController.signal;
+        const timeout = setTimeout(() => {
+            abortController.abort();
+        }, 2000);
+        const available = await fetch("/ip", { mode: 'no-cors', signal });
+        clearTimeout(timeout)
         console.info("server reachable: " + available.ok);
         if (available.ok) {
             getUpTime();

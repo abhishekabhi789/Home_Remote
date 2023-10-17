@@ -1,7 +1,8 @@
 import { prepareToListen } from "./voice_control.js";
 import { fetchData } from "./data_processing.js";
 import { adjustDivStyle, currentNavMode, showOffline, setHostAddress, setTheme } from "./ui_control.js";
-import { switchTable } from "./epg_processing.js";
+import { switchTable, scrollToActiveShow } from "./epg_processing.js";
+import { getId } from "./utils.js";
 
 prepareToListen();
 
@@ -31,7 +32,13 @@ window.addEventListener("DOMContentLoaded", () => {
         });
     });
 })
-
+$(document).on('click touchstart', (e) => {
+    if (getId("epg").style.display === "block" || getId("epg-h").style.display === "block") {
+        if (!$(e.target).closest('.epg').length != 0) {
+            scrollToActiveShow();
+        }
+    }
+});
 
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('serviceWorker.js',)

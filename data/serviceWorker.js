@@ -1,13 +1,13 @@
 const staticCacheName = "static-assets-v2";
 const assets = [
-    "/channeldata", "/epg", "/ip",
+    "/channeldata", "/epg",
     "/remote.html", "/style.css", "/modules/main.js",
     "/modules/data_processing.js", "/modules/epg_processing.js", "/modules/remote_control.js", "/modules/ui_control.js", "/modules/utils.js", "/modules/voice_control.js",
     "/assets/manifest.json", "/assets/favicon.ico", "/assets/192.png", "/assets/512.png"
 ];
 
 // const assets = [ //for debgugging
-//     "/channeldata", "/epg","/ip",
+//     "/channeldata", "/epg",
 //     "/data/remote.html", "/data/style.css", "/data/modules/main.js",
 //     "/data/modules/data_processing.js", "/data/modules/epg_processing.js", "/data/modules/remote_control.js", "/data/modules/ui_control.js", "/data/modules/utils.js", "/data/modules/voice_control.js",
 //     "/data/assets/manifest.json", "/data/assets/favicon.ico", "/data/assets/192.png", "/data/assets/512.png"

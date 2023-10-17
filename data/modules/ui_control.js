@@ -1,5 +1,5 @@
 import { getId, formatTime } from "./utils.js"
-const themes = { LIGHT: "light", DARK: "dark", DEFAULT:"default"}
+const themes = { LIGHT: "light", DARK: "dark", DEFAULT: "default" }
 export function adjustDivStyle(selected) {
     const navButtons = document.getElementsByClassName('navigation-buttons')[0]
     if (selected == "tv") {
@@ -16,7 +16,7 @@ export function currentNavMode() {
 }
 
 export function getCurrentTheme() {
-    const mediaTheme = (window.matchMedia && window.matchMedia("(prefers-color-scheme:dark)").matches) ? 'dark' : 'light';
+    const mediaTheme = (window.matchMedia && window.matchMedia("(prefers-color-scheme:dark)").matches) ? themes.DARK : themes.LIGHT;
     const manualTheme = document.documentElement.classList.value;
     const currentTheme = manualTheme === "" ? mediaTheme : manualTheme;
     return currentTheme;
@@ -24,14 +24,14 @@ export function getCurrentTheme() {
 export function setTheme(theme) {
     const button = document.querySelector('.theme-toggle-button');
     switch (theme) {
-        case 'dark': {
+        case themes.DARK: {
             document.documentElement.classList.remove(themes.LIGHT);
             document.documentElement.classList.add(themes.DARK);
             button.innerHTML = '<i class="fa fa-moon-o"></i>';
             localStorage.setItem("userTheme", themes.DARK);
             break;
         }
-        case 'light': {
+        case themes.LIGHT: {
             document.documentElement.classList.remove(themes.DARK);
             document.documentElement.classList.add(themes.LIGHT);
             localStorage.setItem("userTheme", themes.LIGHT);
