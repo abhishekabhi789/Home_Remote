@@ -101,4 +101,11 @@ void loop()
     previous_command_time = currentMillis;
     return;
   }
+  if (is_booting)
+  {
+    bootIndication(true);
+  } else {
+    bootIndication(false);
+  }
+  
 }

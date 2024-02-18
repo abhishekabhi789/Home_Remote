@@ -48,7 +48,7 @@ WiFiNetwork wiFiNetworks[] = {
 ]
   ```
 
-Host address should be whitelisted on `chrome://flags/#unsafely-treat-insecure-origin-as-secure` to install as PWA and use voice commands.
+Host address should be whitelisted on `chrome://flags/#unsafely-treat-insecure-origin-as-secure` to install as PWA and to use voice commands.
 
 
 ## Libraries Used:

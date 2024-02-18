@@ -8,7 +8,6 @@ prepareToListen();
 
 function init() {
     adjustDivStyle(currentNavMode().value);
-    //prepare theme
     const preferedTheme = localStorage.getItem("userTheme")
     setTheme(preferedTheme)
     setHostAddress();
@@ -23,6 +22,7 @@ window.addEventListener('resize', () => {
 window.onload = () => {
     init();
     fetchData();
+    prepareToListen();
 }
 window.addEventListener("DOMContentLoaded", () => {
     const clickableElements = document.querySelectorAll('button, .scan-button label, .channel-card, .active-show');

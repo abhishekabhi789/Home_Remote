@@ -40,8 +40,8 @@ export function setTheme(theme) {
         }
         default: {
             localStorage.setItem("userTheme", themes.DEFAULT);
-            document.documentElement.classList.remove(themes.DARK);
-            document.documentElement.classList.remove(themes.LIGHT);
+            document.documentElement.classList.remove(themes.DARK,themes.LIGHT);
+            // document.documentElement.classList.remove(themes.LIGHT);
             button.innerHTML = '<i class="fa fa-adjust"></i>';
             break;
         }

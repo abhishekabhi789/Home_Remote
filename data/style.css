@@ -184,6 +184,7 @@ button {
   margin-bottom: 20px;
   box-shadow: var(--shadow);
   text-align: center;
+  display: none;
 }
 
 .tv-control,
