@@ -1,3 +1,4 @@
+// Keeps the inbuilt led glow for the given duration
 void blinkLed(const int &duration)
 {
   neopixelWrite(RGB_BUILTIN, 0, RGB_BRIGHTNESS, 0);
@@ -5,6 +6,7 @@ void blinkLed(const int &duration)
   neopixelWrite(RGB_BUILTIN, 0, 0, 0);
   return;
 }
+//call with boolean to start or stop. repeated call changes color
 void bootIndication(bool loop)
 {
   static int turn = 0;
@@ -28,5 +30,5 @@ void bootIndication(bool loop)
   {
     neopixelWrite(RGB_BUILTIN, 0, 0, RGB_BRIGHTNESS);
   }
-  delay(500);
+  return;
 }

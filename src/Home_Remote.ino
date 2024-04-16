@@ -25,6 +25,7 @@ const int connectTimeoutMs = 10000;
 unsigned long previous_scan_time = 0;
 unsigned long previous_command_time = 0;
 unsigned long boot_time = 0;
+unsigned long boot_indication_change_time = 1; // will set to zero to disable
 bool is_booting = false;
 bool is_tv_on = false;
 bool run_scan = false;
@@ -59,8 +60,9 @@ void loop()
   // not a loop, Waiting for dth to receive commands
   if ((is_booting == true) && (currentMillis - boot_time > DTH_BOOT_DELAY))
   {
-    prepareDth();
     is_booting = false;
+    prepareDth();
+    // bootIndication(false);
     attemptEpgFetching = true;
   }
 
@@ -71,7 +73,7 @@ void loop()
     wifiMulti.run(connectTimeoutMs);
     Serial.println("Re-preparing server");
     if (WiFi.status() == WL_CONNECTED)
-    { 
+    {
       prepareServer();
       address = WiFi.localIP().toString();
     }
@@ -101,11 +103,21 @@ void loop()
     previous_command_time = currentMillis;
     return;
   }
-  if (is_booting)
+
+  if (boot_indication_change_time > 0)
   {
-    bootIndication(true);
-  } else {
-    bootIndication(false);
+    if (is_booting)
+    {
+      if (currentMillis > boot_indication_change_time)
+      {
+        bootIndication(true);
+        boot_indication_change_time = currentMillis + 250;
+      }
+    }
+    else
+    {
+      bootIndication(false);
+      boot_indication_change_time = 0; // this will prevent unnecessary execution of else condition
+    }
   }
-  
 }
