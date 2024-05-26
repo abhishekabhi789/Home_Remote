@@ -1,31 +1,35 @@
 
-void notFound(AsyncWebServerRequest *request)
-{
-  request->send(404, "text/plain", "Not found");
-}
+#include <string>
 
 void prepareServer()
 {
   server.serveStatic("/", SPIFFS, "/");
-  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(SPIFFS, "/remote.html"); });
-  server.on("/ip", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(200, "text/plain", String(address)); });
-  server.on("/epg", HTTP_GET, [](AsyncWebServerRequest *request)
+  server.listen(80);
+  server.on("/", HTTP_GET, [](PsychicRequest *request)
             {
-              if (EPG.length() > 0) {
-                AsyncWebServerResponse *response = request->beginResponse(200, "application/json", EPG);
-                request->send(response);
-                } else {
-                  attemptEpgFetching = true;
-                  request->send(202);
-                  } });
+               PsychicFileResponse response(request, SPIFFS, "/remote.html");
+               return response.send(); });
+  server.on("/ip", HTTP_GET, [](PsychicRequest *request)
+            { return request->reply(200, "text/plain", String(address).c_str()); });
+  server.on("/epg", HTTP_GET, [](PsychicRequest *request)
+            {
+              PsychicResponse response(request);
+              if (EPG.length() > 0)
+              {
+                response.setContent(EPG.c_str());
+                 return response.send(); 
+              }
+              else
+              {
+                attemptEpgFetching = true;
+                 return response.send(); 
+              } });
 
-  server.on("/uptime", HTTP_GET, [](AsyncWebServerRequest *request)
+  server.on("/uptime", HTTP_GET, [](PsychicRequest *request)
             {
               float uptime = (millis() - boot_time)/1000;
-              request->send(200, "text/plain", String(int(uptime))); });
-  server.on("/command", HTTP_POST, [](AsyncWebServerRequest *request)
+            return  request->reply(200, "text/plain", String(int(uptime)).c_str()); });
+  server.on("/command", HTTP_POST, [](PsychicRequest *request)
             {
               String command, channel, device, r_msg, doscan;
               int r_code;
@@ -66,7 +70,7 @@ void prepareServer()
       r_code = 500;
       r_msg = "Unknown error occurred";
     }
-    request->send(r_code, "text/plain", r_msg); });
-  server.onNotFound(notFound);
-  server.begin();
+ return request->reply(r_code, "text/plain", r_msg.c_str()); });
+  server.onNotFound([](PsychicRequest *request)
+                    { return request->reply(404, "text/html", "Not found!"); });
 }

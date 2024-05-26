@@ -4,8 +4,7 @@
 #include <WiFi.h>
 #include <WiFiMulti.h>
 #include <ArduinoOTA.h>
-#include <AsyncTCP.h>
-#include <ESPAsyncWebServer.h>
+#include <PsychicHttp.h>
 #include <SPIFFS.h>
 #include <ESPmDNS.h>
 #include "config.h" //credentials
@@ -33,7 +32,7 @@ String EPG;
 bool attemptEpgFetching = false;
 String address;
 WiFiMulti wifiMulti;
-AsyncWebServer server(80);
+PsychicHttpServer server;
 
 void setup()
 {

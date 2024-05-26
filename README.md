@@ -4,13 +4,20 @@ Personal Project
 
 - IR Transmit: [TinkerCad- IR_Transmitter](https://www.tinkercad.com/things/cOmIBrUoD2K)
 
+## Screenshots
+
+![Screenshots](/Screenshot.png)
+
+<center><small><small><small><small>
+
+Template Credit: [freepik](https://www.freepik.com/free-psd/laptop-smartphone-composition-transparent-background_143806137.htm#query=computer%20tablet%20phone&position=48&from_view=keyword&track=ais_user&uuid=d7f4f6c3-e634-4ce3-a6d8-0eeff29f52b2 "Image by Vectonauta")
+</small></small></small></small></center>
+
 ## Setup 
 #### Sample `../Home_Remote/src/config.h` file
 ```c
 const char *MDNS_HOSTNAME = "remote";//http://remote.local/
 const char *OTA_PASSWORD = "";
-const char *WIFI_AP_SSID = "";
-const char *WIFI_AP_PASSWORD = "";
 
 struct WiFiNetwork
 {
