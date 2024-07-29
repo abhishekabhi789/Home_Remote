@@ -60,14 +60,14 @@ Host address should be whitelisted on `chrome://flags/#unsafely-treat-insecure-o
 
 ## Libraries Used:
 - [Arduino-IRremote](https://github.com/Arduino-IRremote/Arduino-IRremote)
-- [ESPAsyncWebServer](https://github.com/me-no-dev/ESPAsyncWebServer)
+- [~~ESPAsyncWebServer~~](https://github.com/me-no-dev/ESPAsyncWebServer)
+- [PsychicHttp](https://github.com/hoeken/PsychicHttp)
 
 ## Resources Used:
 - [dailypricelist.com- EPG Movies](https://dailypricelist.com/malayalam-tv-movies-list-today.php)
-- [~~wikimedia.org- Television_logos~~](https://commons.wikimedia.org/wiki/Category:Television_logos)
+- [Fontawesome Icons](https://fontawesome.com/)
 
 
 ## References:
 - [Basement Electronics- Sending Infrared Signals](https://youtu.be/2k7lWihdlFY)
 - [RandomNerdTutorials- Demonstration of various ESP32 releated content](https://randomnerdtutorials.com/)
-- [W3Schools- Table sorting](https://www.w3schools.com/howto/howto_js_sort_table.asp)
