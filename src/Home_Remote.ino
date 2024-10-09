@@ -109,13 +109,14 @@ void loop()
     {
       if (currentMillis > boot_indication_change_time)
       {
-        bootIndication(true);
+        float progress = (float)(currentMillis - boot_time) / DTH_BOOT_DELAY;
+        bootIndication(true, progress);
         boot_indication_change_time = currentMillis + 250;
       }
     }
     else
     {
-      bootIndication(false);
+      bootIndication(false, 0);
       boot_indication_change_time = 0; // this will prevent unnecessary execution of else condition
     }
   }
