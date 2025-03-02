@@ -4,8 +4,6 @@ import { adjustDivStyle, currentNavMode, showOffline, setHostAddress, setTheme }
 import { switchTable, scrollToActiveShow } from "./epg_processing.js";
 import { getId } from "./utils.js";
 
-prepareToListen();
-
 function init() {
     adjustDivStyle(currentNavMode().value);
     const preferedTheme = localStorage.getItem("userTheme")

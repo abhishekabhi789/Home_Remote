@@ -1,11 +1,10 @@
 #include <IRremote.h>
 #include "remote_tv.h"
 #include "remote_dth.h"
-IRsend irsend;
 
 void prepareRemoteControl()
 {
-  irsend.begin(SEND_PIN);
+  IrSender.begin(DISABLE_LED_FEEDBACK, 0);
 }
 
 void sendTvCommand(const String &command)
@@ -21,7 +20,7 @@ void sendTvCommand(const String &command)
       commandSize++;
     }
     delay(COMMAND_INTERVAL);
-    irsend.sendRaw(commandCode, commandSize, FREQUENCY);
+    IrSender.sendRaw(commandCode, commandSize, FREQUENCY);
   }
   else
   {
@@ -35,7 +34,7 @@ void sendDthCommand(const String &command)
   int address = getdthCommandCode("address");
   int cmd = getdthCommandCode(String(command));
   delay(COMMAND_INTERVAL);
-  irsend.sendSamsung(address, cmd, DTH_COMMAND_REPEAT);
+  IrSender.sendSamsung(address, cmd, DTH_COMMAND_REPEAT);
 }
 void switchChannel(const String &channel)
 {
