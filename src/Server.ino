@@ -3,11 +3,16 @@
 
 void prepareServer()
 {
-  server.serveStatic("/", SPIFFS, "/");
+  if (!LittleFS.begin())
+  {
+    Serial.println("LittleFS Mount Failed. Do Platform -> Build Filesystem Image and Platform -> Upload Filesystem Image from VSCode");
+    return;
+  }
+  server.serveStatic("/", LittleFS, "/");
   server.listen(80);
   server.on("/", HTTP_GET, [](PsychicRequest *request)
             {
-               PsychicFileResponse response(request, SPIFFS, "/remote.html");
+               PsychicFileResponse response(request, LittleFS, "/remote.html");
                return response.send(); });
   server.on("/ip", HTTP_GET, [](PsychicRequest *request)
             { return request->reply(200, "text/plain", String(address).c_str()); });

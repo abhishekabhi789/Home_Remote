@@ -5,7 +5,7 @@
 #include <WiFiMulti.h>
 #include <ArduinoOTA.h>
 #include <PsychicHttp.h>
-#include <SPIFFS.h>
+#include <LittleFS.h>
 #include <ESPmDNS.h>
 #include "config.h" //credentials
 
